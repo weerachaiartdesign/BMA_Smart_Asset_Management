@@ -1,4 +1,4 @@
-<!-- version 00022 -->
+<!-- version 00023 -->
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -15,130 +15,196 @@
   <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="main.css">
 </head>
-<body class="bg-slate-50">
+<body class="bg-slate-50 flex h-screen overflow-hidden">
 
+  <!-- Loading Screen -->
   <div id="loading" class="fixed inset-0 bg-white flex flex-col items-center justify-center z-[100] transition-opacity duration-500">
     <div class="spinner mb-4"></div>
-    <p id="loading-text" class="text-emerald-800 font-bold animate-pulse">กำลังเรียกข้อมูลทรัพย์สิน กทม...</p>
+    <p id="loading-text" class="text-emerald-800 font-bold animate-pulse">กำลังเรียกข้อมูลทรัพย์สิน BMA...</p>
   </div>
 
-  <div id="main-content" class="hidden min-h-screen">
-    <nav class="bkk-green-gradient text-white shadow-xl sticky top-0 z-50">
-      <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-        <div class="flex items-center gap-3">
-          <div class="bg-white p-1 rounded-lg shadow-sm">
-             <img src="icons/icon-192.png" alt="BMA Logo" class="w-7 h-7">
-          </div>
-          <span class="font-bold text-lg tracking-tight">BMA Asset Management</span>
-        </div>
-        <div class="text-right">
-          <p class="text-[10px] opacity-75 uppercase font-bold">อัปเดตล่าสุด</p>
-          <p id="last-update" class="text-xs font-semibold">-</p>
-        </div>
+  <!-- Sidebar -->
+  <aside class="w-64 bkk-sidebar text-white flex-shrink-0 hidden md:flex flex-col">
+    <div class="p-6 flex items-center gap-3 border-b border-emerald-700/50">
+      <div class="bg-white p-1 rounded-lg shadow-sm">
+        <img src="icons/icon-192.png" alt="BMA Logo" class="w-8 h-8">
       </div>
+      <h1 class="font-bold text-sm tracking-tight leading-tight">BMA Asset<br>Management</h1>
+    </div>
+    
+    <nav class="flex-1 p-4 space-y-2 mt-4">
+      <button onclick="switchTab('dashboard')" id="btn-dashboard" class="nav-link active w-full flex items-center gap-3 px-4 py-3 rounded-xl transition">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+        Dashboard
+      </button>
+      <button onclick="switchTab('inventory')" id="btn-inventory" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl transition">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+        รายการทรัพย์สิน
+      </button>
     </nav>
 
-    <main class="max-w-7xl mx-auto px-4 py-8">
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
-        <div class="stat-card border-l-4 border-emerald-600">
-          <p class="label text-emerald-700">ทรัพย์สินทั้งหมด</p>
-          <p id="total-val" class="value">0</p>
+    <div class="p-6 border-t border-emerald-700/50 text-[10px] opacity-60">
+      <p>Version 00023</p>
+      <p id="last-update-sidebar">อัปเดต: -</p>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+    <!-- Header / Topbar -->
+    <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6 flex-shrink-0">
+      <div class="md:hidden flex items-center gap-2">
+        <img src="icons/icon-192.png" alt="Logo" class="w-6 h-6">
+        <span class="font-bold text-emerald-800">BMA Asset</span>
+      </div>
+      <h2 id="page-title" class="hidden md:block font-bold text-slate-700">Dashboard</h2>
+      <div class="flex items-center gap-4">
+        <span id="connection-status" class="flex items-center gap-1.5 text-xs font-medium text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full">
+          <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+          Connected
+        </span>
+      </div>
+    </header>
+
+    <!-- Scrollable Content -->
+    <main class="flex-1 overflow-y-auto p-4 md:p-8">
+      
+      <!-- Tab 1: Dashboard -->
+      <div id="tab-dashboard" class="tab-content space-y-8 animate-in">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+          <div class="stat-card border-l-4 border-emerald-600">
+            <p class="label text-emerald-700">ทรัพย์สินทั้งหมด</p>
+            <p id="total-val" class="value">0</p>
+          </div>
+          <div class="stat-card border-l-4 border-teal-500">
+            <p class="label text-teal-600">ใช้การได้ปกติ (T)</p>
+            <p id="normal-val" class="value text-emerald-600">0</p>
+          </div>
+          <div class="stat-card border-l-4 border-orange-500">
+            <p class="label text-orange-600">ทรัพย์สินชำรุด (T)</p>
+            <p id="broken-val" class="value text-orange-700">0</p>
+          </div>
         </div>
-        <div class="stat-card border-l-4 border-teal-500">
-          <p class="label text-teal-600">สภาพปกติ</p>
-          <p id="normal-val" class="value text-emerald-600">0</p>
-        </div>
-        <div class="stat-card border-l-4 border-orange-500">
-          <p class="label text-orange-600">ชำรุด/รอจำหน่าย</p>
-          <p id="broken-val" class="value text-orange-700">0</p>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div class="glass-card p-6 h-[450px] flex flex-col">
+            <h3 class="chart-title">สัดส่วนประเภทรายการทรัพย์สิน (F)</h3>
+            <div class="flex-1 relative mt-4"><canvas id="typeChart"></canvas></div>
+          </div>
+          <div class="glass-card p-6 h-[450px] flex flex-col">
+            <h3 class="chart-title">จำนวนทรัพย์สินแยกตามหน่วยงาน (R)</h3>
+            <div class="flex-1 relative mt-4"><canvas id="deptChart"></canvas></div>
+          </div>
         </div>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        <div class="glass-card p-6 h-[400px]">
-          <h3 class="chart-title">สัดส่วนแยกตามประเภท</h3>
-          <div class="h-72"><canvas id="typeChart"></canvas></div>
-        </div>
-        <div class="glass-card p-6 h-[400px]">
-          <h3 class="chart-title">หน่วยงานที่ถือครองสูงสุด</h3>
-          <div class="h-72"><canvas id="deptChart"></canvas></div>
+      <!-- Tab 2: รายการทรัพย์สิน (ตาราง) -->
+      <div id="tab-inventory" class="tab-content hidden animate-in">
+        <div class="glass-card overflow-hidden">
+          <div class="px-6 py-6 bg-white border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <h3 class="font-bold text-slate-800 text-lg">ฐานข้อมูลรายการทรัพย์สิน</h3>
+            <div class="relative w-full md:w-96">
+              <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="ค้นหาเลขครุภัณฑ์, รายการ หรือหน่วยงาน..." 
+                     class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all">
+              <svg class="w-5 h-5 absolute left-3 top-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            </div>
+          </div>
+          
+          <div class="overflow-x-auto h-[600px] overflow-y-auto relative">
+            <table class="w-full text-left border-collapse" id="assetTable">
+              <thead class="sticky top-0 bg-emerald-50 text-emerald-800 text-[11px] uppercase font-bold z-10">
+                <tr>
+                  <th class="px-6 py-4 border-b border-emerald-100">เลขครุภัณฑ์ (B)</th>
+                  <th class="px-6 py-4 border-b border-emerald-100">รายการ (F)</th>
+                  <th class="px-6 py-4 border-b border-emerald-100">ยี่ห้อ/รุ่น (H,I)</th>
+                  <th class="px-6 py-4 border-b border-emerald-100 text-right">มูลค่าต้นทุน (O)</th>
+                  <th class="px-6 py-4 border-b border-emerald-100">หน่วยงาน (R)</th>
+                  <th class="px-6 py-4 border-b border-emerald-100 text-center">สถานะ (T)</th>
+                  <th class="px-6 py-4 border-b border-emerald-100 text-center">URL (S)</th>
+                </tr>
+              </thead>
+              <tbody id="table-body" class="divide-y divide-slate-100 text-sm">
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 
-      <div class="glass-card overflow-hidden shadow-sm">
-        <div class="px-6 py-4 bg-emerald-50 border-b border-emerald-100 flex items-center justify-between">
-          <h3 class="font-bold text-emerald-900 text-sm">รายการทรัพย์สินล่าสุด (Top 50)</h3>
-          <button onclick="location.reload()" class="p-2 hover:bg-emerald-100 rounded-full transition-colors">
-            <svg class="w-5 h-5 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-          </button>
-        </div>
-        <div class="overflow-x-auto">
-          <table class="w-full text-left">
-            <thead class="bg-slate-50 text-slate-400 text-[10px] uppercase font-bold tracking-wider">
-              <tr>
-                <th class="px-6 py-4">รหัสครุภัณฑ์</th>
-                <th class="px-6 py-4">ชื่อรายการ / รุ่น</th>
-                <th class="px-6 py-4">หน่วยงาน</th>
-                <th class="px-6 py-4 text-center">สถานะ</th>
-              </tr>
-            </thead>
-            <tbody id="table-body" class="divide-y divide-slate-100 text-sm"></tbody>
-          </table>
-        </div>
-      </div>
     </main>
   </div>
 
   <script src="js/api-config.js"></script>
   <script>
+    let globalData = [];
     let charts = {};
+
     async function fetchData() {
       try {
         const response = await fetch(WEB_APP_URL);
-        const data = await response.json();
-        if (data.error) throw new Error(data.error);
-        render(data);
+        globalData = await response.json();
+        if (globalData.error) throw new Error(globalData.error);
+        render();
       } catch (err) {
         document.getElementById('loading-text').innerHTML = 
           `<span class="text-red-600">การเชื่อมต่อผิดพลาด: ${err.message}</span><br>
-           <button onclick="location.reload()" class="mt-4 px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm">ลองอีกครั้ง</button>`;
+           <button onclick="location.reload()" class="mt-4 px-6 py-2 bg-emerald-600 text-white rounded-xl text-sm shadow-lg">ลองอีกครั้ง</button>`;
       }
     }
 
-    function render(data) {
+    function render() {
       document.getElementById('loading').style.opacity = '0';
       setTimeout(() => {
         document.getElementById('loading').classList.add('hidden');
-        document.getElementById('main-content').classList.remove('hidden');
       }, 500);
 
-      document.getElementById('last-update').innerText = new Date().toLocaleString('th-TH');
-      const total = data.length;
-      const normal = data.filter(d => ['ปกติ','ใช้งานได้','พร้อมใช้'].some(s => String(d.status).includes(s))).length;
-      const broken = data.filter(d => ['ชำรุด','จำหน่าย','พัง'].some(s => String(d.status).includes(s))).length;
+      const timeString = new Date().toLocaleString('th-TH');
+      document.getElementById('last-update-sidebar').innerText = `อัปเดต: ${timeString}`;
+
+      const total = globalData.length;
+      const normal = globalData.filter(d => ['ปกติ','ใช้งานได้','พร้อมใช้'].some(s => String(d.status).includes(s))).length;
+      const broken = globalData.filter(d => ['ชำรุด','จำหน่าย','พัง','ซ่อม'].some(s => String(d.status).includes(s))).length;
 
       document.getElementById('total-val').innerText = total.toLocaleString();
       document.getElementById('normal-val').innerText = normal.toLocaleString();
       document.getElementById('broken-val').innerText = broken.toLocaleString();
 
-      const typeData = groupAndSort(data, 'type', 5);
-      const deptData = groupAndSort(data, 'dept', 5);
+      const typeData = groupAndSort(globalData, 'type', 10);
+      const deptData = groupAndSort(globalData, 'dept', 10);
 
-      updateChart('typeChart', 'doughnut', Object.keys(typeData), Object.values(typeData), ['#059669', '#10b981', '#34d399', '#6ee7b7', '#a7f3d0']);
-      updateChart('deptChart', 'bar', Object.keys(deptData), Object.values(deptData), '#059669');
+      updateChart('typeChart', 'doughnut', Object.keys(typeData), Object.values(typeData), ['#065f46', '#059669', '#10b981', '#34d399', '#6ee7b7', '#a7f3d0', '#d1fae5', '#ecfdf5']);
+      updateChart('deptChart', 'bar', Object.keys(deptData), Object.values(deptData), '#10b981');
 
-      document.getElementById('table-body').innerHTML = data.slice(0, 50).map(item => `
-        <tr class="hover:bg-emerald-50/50 transition">
-          <td class="px-6 py-4 font-mono text-[10px] text-slate-400 font-bold">${item.id}</td>
+      renderTable(globalData);
+    }
+
+    function renderTable(data) {
+      document.getElementById('table-body').innerHTML = data.map(item => `
+        <tr class="hover:bg-emerald-50/40 transition">
+          <td class="px-6 py-4 font-mono text-[11px] text-slate-500 font-bold">${item.id}</td>
           <td class="px-6 py-4">
             <div class="font-bold text-slate-700">${item.type}</div>
-            <div class="text-[10px] text-slate-400">${item.brand || ''} ${item.model || ''}</div>
           </td>
-          <td class="px-6 py-4 text-slate-500 text-xs">${item.dept}</td>
+          <td class="px-6 py-4">
+            <div class="text-xs text-slate-600 font-medium">${item.brand || '-'}</div>
+            <div class="text-[10px] text-slate-400">${item.model || ''}</div>
+          </td>
+          <td class="px-6 py-4 text-right font-mono text-slate-600">
+            ${Number(item.value).toLocaleString(undefined, {minimumFractionDigits: 2})}
+          </td>
+          <td class="px-6 py-4">
+            <span class="text-xs bg-slate-100 px-2 py-1 rounded text-slate-600">${item.dept}</span>
+          </td>
           <td class="px-6 py-4 text-center">
             <span class="px-3 py-1 rounded-full text-[10px] font-bold ${['ปกติ','ใช้งานได้'].some(s => String(item.status).includes(s)) ? 'bg-emerald-100 text-emerald-700' : 'bg-orange-100 text-orange-700'}">
               ${item.status}
             </span>
+          </td>
+          <td class="px-6 py-4 text-center">
+            ${item.url ? `
+              <a href="${item.url}" target="_blank" class="inline-flex p-2 text-emerald-600 hover:bg-emerald-50 rounded-full transition" title="เปิดลิงก์">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
+              </a>
+            ` : '<span class="text-slate-300">-</span>'}
           </td>
         </tr>
       `).join('');
@@ -156,16 +222,54 @@
     function updateChart(id, type, labels, data, colors) {
       const ctx = document.getElementById(id).getContext('2d');
       if (charts[id]) charts[id].destroy();
+      
+      const options = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { 
+            position: type === 'doughnut' ? 'right' : 'bottom',
+            labels: { font: { family: 'Sarabun', size: 11 }, usePointStyle: true }
+          }
+        }
+      };
+
+      if (type === 'bar') {
+        options.scales = {
+          y: { beginAtZero: true, grid: { display: false } },
+          x: { grid: { display: false }, ticks: { font: { size: 10 } } }
+        };
+        options.indexAxis = 'y';
+      }
+
       charts[id] = new Chart(ctx, {
         type: type,
-        data: { labels: labels, datasets: [{ data: data, backgroundColor: colors, borderWidth: 0 }] },
-        options: { 
-          responsive: true, 
-          maintainAspectRatio: false,
-          plugins: { legend: { position: 'bottom', labels: { font: { family: 'Sarabun', size: 10 } } } }
-        }
+        data: { labels: labels, datasets: [{ data: data, backgroundColor: colors, borderRadius: 5 }] },
+        options: options
       });
     }
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.getElementById('tab-' + tabId).classList.remove('hidden');
+      
+      document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
+      document.getElementById('btn-' + tabId).classList.add('active');
+
+      document.getElementById('page-title').innerText = tabId === 'dashboard' ? 'Dashboard' : 'รายการทรัพย์สิน';
+    }
+
+    function filterTable() {
+      const input = document.getElementById("searchInput").value.toLowerCase();
+      const filtered = globalData.filter(item => 
+        item.id.toLowerCase().includes(input) || 
+        item.type.toLowerCase().includes(input) || 
+        item.dept.toLowerCase().includes(input) ||
+        item.brand.toLowerCase().includes(input)
+      );
+      renderTable(filtered);
+    }
+
     window.onload = fetchData;
   </script>
 </body>
