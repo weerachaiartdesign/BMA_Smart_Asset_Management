@@ -1,7 +1,7 @@
 {
-  "name": "BKK Asset Management System",
-  "short_name": "BKK Asset",
-  "description": "ระบบติดตามและบริหารจัดการทรัพย์สิน กรุงเทพมหานคร",
+  "name": "BMA Asset Management",
+  "short_name": "BMA Asset",
+  "description": "โปรแกรมจัดการทรัพย์สิน กรุงเทพมหานคร",
   "start_url": "index.html",
   "display": "standalone",
   "background_color": "#f8fafc",
