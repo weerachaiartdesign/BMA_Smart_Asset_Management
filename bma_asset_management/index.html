@@ -96,7 +96,7 @@
       const newIsMobile = window.innerWidth < 768;
       if(newIsMobile !== isMobile) {
         isMobile = newIsMobile;
-        switchTab(currentTab); // รีโหลดไฟล์ให้เหมาะกับหน้าจอใหม่
+        switchTab(currentTab);
       }
     });
 
@@ -122,7 +122,6 @@
         const html = await response.text();
         mainContent.innerHTML = html;
 
-        // UI Updates
         updateNavUI(tabId);
         
         document.getElementById('loading').style.opacity = '0';
@@ -135,12 +134,10 @@
     }
 
     function updateNavUI(tabId) {
-      // Desktop
       document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
       const desktopBtn = document.getElementById('btn-' + tabId);
       if(desktopBtn) desktopBtn.classList.add('active');
 
-      // Mobile
       const mDash = document.getElementById('m-btn-dashboard');
       const mInv = document.getElementById('m-btn-inventory');
       if(mDash && mInv) {
@@ -190,10 +187,13 @@
           <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 mb-3">
             <div class="flex justify-between items-start mb-2">
               <span class="text-[10px] font-bold text-slate-400 font-mono">${item.id}</span>
-              <span class="px-2 py-0.5 rounded-full text-[9px] font-bold ${['ปกติ','ใช้งานได้'].some(s => String(item.status).includes(s)) ? 'bg-emerald-100 text-emerald-700' : 'bg-orange-100 text-orange-700'}">${item.status}</span>
+              <div class="flex gap-2">
+                ${item.url ? `<a href="${item.url}" target="_blank" class="text-emerald-600 p-1"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg></a>` : ''}
+                <span class="px-2 py-0.5 rounded-full text-[9px] font-bold ${['ปกติ','ใช้งานได้'].some(s => String(item.status).includes(s)) ? 'bg-emerald-100 text-emerald-700' : 'bg-orange-100 text-orange-700'}">${item.status}</span>
+              </div>
             </div>
             <div class="font-bold text-slate-800 text-sm mb-1">${item.type}</div>
-            <div class="text-xs text-slate-500 mb-3">${item.brand} ${item.model}</div>
+            <div class="text-xs text-slate-500 mb-3">${item.brand || ''} ${item.model || ''}</div>
             <div class="flex justify-between items-center pt-3 border-t border-slate-50">
               <div class="text-[10px] text-slate-400">${item.dept}</div>
               <div class="font-mono font-bold text-emerald-700 text-sm">฿${Number(item.value).toLocaleString()}</div>
@@ -205,11 +205,18 @@
           <tr class="hover:bg-emerald-50/40 transition">
             <td class="px-6 py-4 font-mono text-[11px] text-slate-500 font-bold">${item.id}</td>
             <td class="px-6 py-4 font-bold text-slate-700">${item.type}</td>
-            <td class="px-6 py-4 text-xs text-slate-600">${item.brand} ${item.model}</td>
+            <td class="px-6 py-4 text-xs text-slate-600">${item.brand || ''} ${item.model || ''}</td>
             <td class="px-6 py-4 text-right font-mono">฿${Number(item.value).toLocaleString()}</td>
             <td class="px-6 py-4 text-xs">${item.dept}</td>
             <td class="px-6 py-4 text-center">
               <span class="px-3 py-1 rounded-full text-[10px] font-bold ${['ปกติ','ใช้งานได้'].some(s => String(item.status).includes(s)) ? 'bg-emerald-100 text-emerald-700' : 'bg-orange-100 text-orange-700'}">${item.status}</span>
+            </td>
+            <td class="px-6 py-4 text-center">
+              ${item.url ? `
+                <a href="${item.url}" target="_blank" class="inline-flex p-2 text-[#12643a] hover:bg-emerald-50 rounded-full transition">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                </a>
+              ` : '<span class="text-slate-300">-</span>'}
             </td>
           </tr>
         `).join('');
