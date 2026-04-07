@@ -1,4 +1,5 @@
 {
+  "version": "00025",
   "name": "BMA Assets Management",
   "short_name": "BMA Assets",
   "description": "โปรแกรมจัดการทรัพย์สิน กรุงเทพมหานคร",
@@ -40,12 +41,6 @@
       "purpose": "any"
     },
     {
-      "src": "bmaasset_icon-1024.png",
-      "sizes": "1024x1024",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
       "src": "bmaasset_apple-touch-icon.png",
       "sizes": "180x180",
       "type": "image/png",
@@ -57,6 +52,5 @@
       "type": "image/png",
       "purpose": "any"
     }
-  ],
-  "version_comment": "00024"
+  ]
 }
