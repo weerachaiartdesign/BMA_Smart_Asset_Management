@@ -1,10 +1,10 @@
-<!-- version 00029 -->
+<!-- version 00030 -->
 <!DOCTYPE html>
 <html lang="th">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>BMA Assets Management</title>
+  <title>BMA Assets Management v00030</title>
   
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#12643a">
@@ -22,7 +22,7 @@
   <!-- Loading Screen -->
   <div id="loading" class="fixed inset-0 bg-white flex flex-col items-center justify-center z-[100] transition-opacity duration-500">
     <div class="spinner mb-4"></div>
-    <p id="loading-text" class="text-emerald-800 font-bold animate-pulse">กำลังเรียกข้อมูล BMA Assets...</p>
+    <p id="loading-text" class="text-emerald-800 font-bold animate-pulse text-center px-4">กำลังเรียกข้อมูล BMA Assets v00030...</p>
   </div>
 
   <!-- Sidebar (Desktop Only) -->
@@ -46,7 +46,7 @@
     </nav>
 
     <div class="p-6 border-t border-emerald-700/50 text-[10px] opacity-60">
-      <p>Version 00029</p>
+      <p>Version 00030</p>
       <p id="last-update-sidebar">อัปเดต: -</p>
     </div>
   </aside>
@@ -103,11 +103,19 @@
     async function fetchData() {
       try {
         const response = await fetch(WEB_APP_URL);
+        if (!response.ok) throw new Error("Network response was not ok");
         globalData = await response.json();
         if (globalData.error) throw new Error(globalData.error);
         await switchTab('dashboard');
       } catch (err) {
-        document.getElementById('loading-text').innerHTML = `<span class="text-red-600">${err.message}</span>`;
+        console.error("Fetch failed:", err);
+        document.getElementById('loading-text').innerHTML = `
+          <div class="p-4 bg-red-50 text-red-600 rounded-lg border border-red-100">
+            <p class="font-bold">Failed to fetch data</p>
+            <p class="text-xs mt-1">${err.message}</p>
+            <button onclick="location.reload()" class="mt-3 px-4 py-1 bg-red-600 text-white rounded-full text-xs">ลองใหม่อีกครั้ง</button>
+          </div>
+        `;
       }
     }
 
@@ -119,6 +127,7 @@
       
       try {
         const response = await fetch(fileToLoad);
+        if(!response.ok) throw new Error(`Could not load ${fileToLoad}`);
         const html = await response.text();
         mainContent.innerHTML = html;
 
@@ -129,7 +138,8 @@
 
         renderContent();
       } catch (err) {
-        console.error("Load error:", err);
+        console.error("Tab Switch Error:", err);
+        mainContent.innerHTML = `<div class="p-8 text-center text-slate-400">เกิดข้อผิดพลาดในการโหลดเนื้อหา (${err.message})</div>`;
       }
     }
 
@@ -149,7 +159,6 @@
           mDash.classList.add('text-slate-400'); mDash.classList.remove('text-emerald-800');
         }
       }
-      
       document.getElementById('page-title').innerText = tabId === 'dashboard' ? 'Dashboard' : 'รายการทรัพย์สิน';
     }
 
@@ -256,7 +265,13 @@
           indexAxis: indexAxis,
           responsive: true,
           maintainAspectRatio: false,
-          plugins: { legend: { display: type === 'doughnut', position: 'bottom', labels: { font: { family: 'Sarabun', size: 10 } } } }
+          plugins: { 
+            legend: { 
+              display: type === 'doughnut', 
+              position: 'bottom', 
+              labels: { font: { family: 'Sarabun', size: 10 } } 
+            } 
+          }
         }
       });
     }
