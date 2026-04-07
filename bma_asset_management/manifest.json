@@ -1,27 +1,62 @@
 {
-  "version_comment": "00023",
-  "short_name": "BMA Asset",
-  "name": "BMA Asset Management",
+  "name": "BMA Assets Management",
+  "short_name": "BMA Assets",
   "description": "โปรแกรมจัดการทรัพย์สิน กรุงเทพมหานคร",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#12643a",
+  "lang": "th",
   "icons": [
     {
-      "src": "icons/icon-192.png",
+      "src": "bmaasset_icon-144.png",
+      "sizes": "144x144",
       "type": "image/png",
-      "sizes": "192x192",
       "purpose": "any"
     },
     {
-      "src": "icons/icon-512.png",
+      "src": "bmaasset_icon-152.png",
+      "sizes": "152x152",
       "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "bmaasset_icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "bmaasset_icon-384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "bmaasset_icon-512.png",
       "sizes": "512x512",
-      "purpose": "maskable"
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "bmaasset_icon-1024.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "bmaasset_apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "bmaasset_apple-touch-icon-ipad.png",
+      "sizes": "167x167",
+      "type": "image/png",
+      "purpose": "any"
     }
   ],
-  "start_url": "index.html",
-  "display": "standalone",
-  "orientation": "portrait",
-  "theme_color": "#16a34a",
-  "background_color": "#ffffff",
-  "scope": "/",
-  "lang": "th-TH"
+  "version_comment": "00024"
 }
