@@ -165,10 +165,8 @@
       const total = globalData.length;
       const normal = globalData.filter(d => ['ปกติ','ใช้งานได้','พร้อมใช้'].some(s => String(d.status).includes(s))).length;
       const broken = globalData.filter(d => ['ชำรุด','พัง','ซ่อม','ไม่พร้อมใช้'].some(s => String(d.status).includes(s))).length;
-      // 4. เพิ่มรายการรอจำหน่าย
       const waiting = globalData.filter(d => String(d.status).includes('รอจำหน่าย')).length;
 
-      // อัปเดตตัวเลขหน้า Dashboard (ต้องมี ID waiting-val ในไฟล์เทมเพลตด้วย)
       ['total-val', 'normal-val', 'broken-val', 'waiting-val'].forEach((id, idx) => {
         const el = document.getElementById(id);
         if(el) el.innerText = [total, normal, broken, waiting][idx].toLocaleString();
@@ -177,10 +175,7 @@
       const typeData = groupAndSort(globalData, 'type', isMobile ? 5 : 10);
       const deptData = groupAndSort(globalData, 'dept', isMobile ? 5 : 8);
 
-      // 1 & 2. ปรับปรุงกราฟประเภททรัพย์สิน (หัวข้อเปลี่ยนใน d_dashboard.html)
       updateChart('typeChart', 'doughnut', Object.keys(typeData), Object.values(typeData), ['#064e3b', '#059669', '#10b981', '#6ee7b7', '#d1fae5']);
-      
-      // 3. ปรับปรุงกราฟหน่วยงาน (หัวข้อเปลี่ยนใน d_dashboard.html)
       updateChart('deptChart', isMobile ? 'horizontalBar' : 'bar', Object.keys(deptData), Object.values(deptData), '#059669');
     }
 
@@ -274,7 +269,7 @@
           plugins: { 
             legend: { 
               display: type === 'doughnut', 
-              position: isMobile ? 'bottom' : 'left', // 1. ย้ายคำอธิบายไปด้านซ้าย
+              position: 'left', // แก้ไขให้แสดงด้านซ้ายเสมอทั้ง Mobile และ Desktop
               labels: { 
                 font: { family: 'Sarabun', size: 10 },
                 boxWidth: 10,
