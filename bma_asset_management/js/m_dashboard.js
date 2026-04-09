@@ -1,24 +1,19 @@
 /**
- * version 00032
- * Logic สำหรับหน้า Dashboard (Mobile)
+ * version 00033
+ * ฟังก์ชันจัดการ Dashboard สำหรับหน้าจอมือถือ
  */
 function renderMobileDashboard(data) {
-  const total = data.length;
-  const normal = data.filter(d => ['ปกติ','ใช้งานได้','พร้อมใช้'].some(s => String(d.status).includes(s))).length;
-  const broken = data.filter(d => ['ชำรุด','พัง','ซ่อม','ไม่พร้อมใช้'].some(s => String(d.status).includes(s))).length;
-  const waiting = data.filter(d => String(d.status).includes('รอจำหน่าย')).length;
+  const stats = {
+    total: data.length,
+    normal: data.filter(d => ['ปกติ','ใช้งานได้'].some(s => d.status.includes(s))).length,
+    broken: data.filter(d => ['ชำรุด','พัง'].some(s => d.status.includes(s))).length
+  };
 
-  const ids = ['total-val', 'normal-val', 'broken-val', 'waiting-val'];
-  const vals = [total, normal, broken, waiting];
-  
-  ids.forEach((id, i) => {
-    const el = document.getElementById(id);
-    if(el) el.innerText = vals[i].toLocaleString();
-  });
+  document.getElementById('m-total').innerText = stats.total.toLocaleString();
+  document.getElementById('m-normal').innerText = stats.normal.toLocaleString();
+  document.getElementById('m-broken').innerText = stats.broken.toLocaleString();
 
-  const typeData = groupAndSortData(data, 'type', 5);
-  const deptData = groupAndSortData(data, 'dept', 5);
-
-  updateChartInstance('typeChart', 'doughnut', Object.keys(typeData), Object.values(typeData), ['#064e3b', '#059669', '#10b981', '#6ee7b7', '#d1fae5']);
-  updateChartInstance('deptChart', 'horizontalBar', Object.keys(deptData), Object.values(deptData), '#059669');
+  const typeMap = groupAndSortData(data, 'type', 5);
+  // ใช้กราฟแบบแนวนอนสำหรับมือถือเพื่อให้ดูง่ายขึ้น
+  updateChart('mTypeChart', 'doughnut', Object.keys(typeMap), Object.values(typeMap));
 }
