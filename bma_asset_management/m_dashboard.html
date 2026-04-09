@@ -1,22 +1,42 @@
-<!-- version 00033 -->
-<div class="p-4 space-y-4">
-  <div class="grid grid-cols-3 gap-2">
-    <div class="bg-white p-3 rounded-xl shadow-sm text-center">
-      <p class="text-[9px] font-bold text-slate-400 uppercase">ทั้งหมด</p>
-      <p id="m-total" class="text-lg font-bold text-slate-800">0</p>
+<!-- version 00033 (Updated) -->
+<div class="p-4 space-y-4 pb-24">
+  <!-- แถวบน: สถิติรวมและปกติ -->
+  <div class="grid grid-cols-2 gap-3">
+    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
+      <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">ทรัพย์สินทั้งหมด</p>
+      <p id="m-total" class="text-2xl font-bold text-slate-800 leading-none">0</p>
     </div>
-    <div class="bg-white p-3 rounded-xl shadow-sm text-center">
-      <p class="text-[9px] font-bold text-emerald-500 uppercase">ปกติ</p>
-      <p id="m-normal" class="text-lg font-bold text-emerald-600">0</p>
+    <div class="bg-white p-4 rounded-2xl shadow-sm border border-emerald-50">
+      <p class="text-[10px] font-bold text-emerald-500 uppercase mb-1">ปกติ/ใช้งานได้</p>
+      <p id="m-normal" class="text-2xl font-bold text-emerald-600 leading-none">0</p>
     </div>
-    <div class="bg-white p-3 rounded-xl shadow-sm text-center">
-      <p class="text-[9px] font-bold text-orange-500 uppercase">ชำรุด</p>
-      <p id="m-broken" class="text-lg font-bold text-orange-600">0</p>
+  </div>
+
+  <!-- แถวสอง: ชำรุดและรอจำหน่าย -->
+  <div class="grid grid-cols-2 gap-3">
+    <div class="bg-white p-4 rounded-2xl shadow-sm border border-orange-50">
+      <p class="text-[10px] font-bold text-orange-500 uppercase mb-1">ชำรุด/พัง</p>
+      <p id="m-broken" class="text-2xl font-bold text-orange-600 leading-none">0</p>
+    </div>
+    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-50">
+      <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">รอจำหน่าย</p>
+      <p id="m-waiting" class="text-2xl font-bold text-slate-500 leading-none">0</p>
     </div>
   </div>
   
-  <div class="bg-white p-4 rounded-2xl shadow-sm h-64 flex flex-col">
-    <p class="font-bold text-slate-700 mb-2 text-xs text-center">ประเภททรัพย์สิน (Top 5)</p>
-    <div class="flex-1"><canvas id="mTypeChart"></canvas></div>
+  <!-- กราฟที่ 1: แยกตามประเภท -->
+  <div class="bg-white p-4 rounded-2xl shadow-sm h-64 border border-slate-100 flex flex-col">
+    <p class="font-bold text-slate-700 mb-2 text-xs">แยกตามประเภททรัพย์สิน (Top 5)</p>
+    <div class="flex-1 relative">
+      <canvas id="mTypeChart"></canvas>
+    </div>
+  </div>
+
+  <!-- กราฟที่ 2: แยกตามหน่วยงาน -->
+  <div class="bg-white p-4 rounded-2xl shadow-sm h-64 border border-slate-100 flex flex-col">
+    <p class="font-bold text-slate-700 mb-2 text-xs">แยกตามหน่วยงาน (Top 5)</p>
+    <div class="flex-1 relative">
+      <canvas id="mDeptChart"></canvas>
+    </div>
   </div>
 </div>
