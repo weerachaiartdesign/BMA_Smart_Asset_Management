@@ -1,35 +1,22 @@
-<!-- version 00032 -->
-<div class="space-y-4">
-  <div class="grid grid-cols-2 gap-3">
-    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
-      <div class="text-[10px] text-slate-400 font-bold mb-1">ทั้งหมด</div>
-      <div id="total-val" class="text-xl font-black text-slate-800">-</div>
+<!-- version 00033 -->
+<div class="p-4 space-y-4">
+  <div class="grid grid-cols-3 gap-2">
+    <div class="bg-white p-3 rounded-xl shadow-sm text-center">
+      <p class="text-[9px] font-bold text-slate-400 uppercase">ทั้งหมด</p>
+      <p id="m-total" class="text-lg font-bold text-slate-800">0</p>
     </div>
-    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
-      <div class="text-[10px] text-emerald-500 font-bold mb-1">ปกติ</div>
-      <div id="normal-val" class="text-xl font-black text-emerald-600">-</div>
+    <div class="bg-white p-3 rounded-xl shadow-sm text-center">
+      <p class="text-[9px] font-bold text-emerald-500 uppercase">ปกติ</p>
+      <p id="m-normal" class="text-lg font-bold text-emerald-600">0</p>
     </div>
-    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
-      <div class="text-[10px] text-orange-500 font-bold mb-1">ชำรุด</div>
-      <div id="broken-val" class="text-xl font-black text-orange-600">-</div>
-    </div>
-    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
-      <div class="text-[10px] text-rose-500 font-bold mb-1">รอจำหน่าย</div>
-      <div id="waiting-val" class="text-xl font-black text-rose-600">-</div>
+    <div class="bg-white p-3 rounded-xl shadow-sm text-center">
+      <p class="text-[9px] font-bold text-orange-500 uppercase">ชำรุด</p>
+      <p id="m-broken" class="text-lg font-bold text-orange-600">0</p>
     </div>
   </div>
-
-  <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
-    <h3 class="text-xs font-bold text-slate-700 mb-4 tracking-tight">ประเภททรัพย์สิน</h3>
-    <div class="h-56 relative">
-      <canvas id="typeChart"></canvas>
-    </div>
-  </div>
-
-  <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
-    <h3 class="text-xs font-bold text-slate-700 mb-4 tracking-tight">ทรัพย์สินแยกตามหน่วยงาน</h3>
-    <div class="h-48">
-      <canvas id="deptChart"></canvas>
-    </div>
+  
+  <div class="bg-white p-4 rounded-2xl shadow-sm h-64 flex flex-col">
+    <p class="font-bold text-slate-700 mb-2 text-xs text-center">ประเภททรัพย์สิน (Top 5)</p>
+    <div class="flex-1"><canvas id="mTypeChart"></canvas></div>
   </div>
 </div>
