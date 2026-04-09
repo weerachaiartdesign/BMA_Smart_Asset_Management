@@ -1,28 +1,47 @@
 /**
- * version 00032
- * Logic สำหรับหน้า Dashboard (Desktop)
+ * version 00033
+ * ฟังก์ชันสำหรับประมวลผลข้อมูลและอัปเดต Dashboard บน Desktop
  */
 function renderDesktopDashboard(data) {
-  const total = data.length;
-  const normal = data.filter(d => ['ปกติ','ใช้งานได้','พร้อมใช้'].some(s => String(d.status).includes(s))).length;
-  const broken = data.filter(d => ['ชำรุด','พัง','ซ่อม','ไม่พร้อมใช้'].some(s => String(d.status).includes(s))).length;
-  const waiting = data.filter(d => String(d.status).includes('รอจำหน่าย')).length;
-
-  const mapping = {
-    'total-val': total,
-    'normal-val': normal,
-    'broken-val': broken,
-    'waiting-val': waiting
+  // คำนวณค่าทางสถิติ
+  const stats = {
+    total: data.length,
+    normal: data.filter(d => ['ปกติ','ใช้งานได้'].some(s => d.status.includes(s))).length,
+    broken: data.filter(d => ['ชำรุด','พัง'].some(s => d.status.includes(s))).length,
+    waiting: data.filter(d => d.status.includes('รอจำหน่าย')).length
   };
 
-  Object.entries(mapping).forEach(([id, val]) => {
-    const el = document.getElementById(id);
-    if (el) el.innerText = val.toLocaleString();
+  // อัปเดตตัวเลขใน Card
+  Object.keys(stats).forEach(id => {
+    const el = document.getElementById(id + '-val');
+    if(el) el.innerText = stats[id].toLocaleString();
   });
 
-  const typeData = groupAndSortData(data, 'type', 10);
-  const deptData = groupAndSortData(data, 'dept', 8);
+  // เตรียมข้อมูลกราฟ
+  const typeMap = groupAndSortData(data, 'type', 10);
+  const deptMap = groupAndSortData(data, 'dept', 8);
 
-  updateChartInstance('typeChart', 'doughnut', Object.keys(typeData), Object.values(typeData), ['#064e3b', '#059669', '#10b981', '#6ee7b7', '#d1fae5']);
-  updateChartInstance('deptChart', 'bar', Object.keys(deptData), Object.values(deptData), '#059669');
+  updateChart('typeChart', 'doughnut', Object.keys(typeMap), Object.values(typeMap));
+  updateChart('deptChart', 'bar', Object.keys(deptMap), Object.values(deptMap));
+}
+
+/**
+ * ฟังก์ชัน updateChart: จัดการการวาดหรือทำลายกราฟเก่าก่อนสร้างใหม่ (Chart.js)
+ */
+function updateChart(id, type, labels, values) {
+  const canvas = document.getElementById(id);
+  if (!canvas) return;
+  if (charts[id]) charts[id].destroy();
+
+  charts[id] = new Chart(canvas, {
+    type: type,
+    data: {
+      labels: labels,
+      datasets: [{
+        data: values,
+        backgroundColor: ['#064e3b', '#059669', '#10b981', '#34d399', '#6ee7b7', '#a7f3d0', '#d1fae5', '#ecfdf5', '#f0fdf4', '#f8fafc']
+      }]
+    },
+    options: { responsive: true, maintainAspectRatio: false }
+  });
 }
