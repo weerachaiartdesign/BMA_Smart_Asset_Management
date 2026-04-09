@@ -24,8 +24,8 @@ function renderMobileDashboard(data) {
   if(waitingEl) waitingEl.innerText = stats.waiting.toLocaleString();
 
   // 3. เตรียมข้อมูลกราฟ
-  const typeMap = groupAndSortData(data, 'type', 5);
-  const deptMap = groupAndSortData(data, 'dept', 5); // กรอง Top 5 หน่วยงาน
+  const typeMap = groupAndSortData(data, 'type', 10);
+  const deptMap = groupAndSortData(data, 'dept', 10); // กรอง Top 5 หน่วยงาน
   
   // 4. วาดกราฟประเภท (Doughnut)
   updateMobileChart('mTypeChart', 'doughnut', Object.keys(typeMap), Object.values(typeMap));
