@@ -1,17 +1,29 @@
-/* version 00025 */
+/* version 00035 */
 body {
     font-family: 'Sarabun', sans-serif;
     color: #334155;
 }
 
-/* Sidebar Custom */
+/* 1. ปรับปรุง Sidebar ให้เป็นสีเขียว กทม. และรองรับการพับเก็บ */
 .bkk-sidebar {
-    background: linear-gradient(180deg, #0a3d24 0%, #12643a 100%);
+    background: #12643a; /* สีเขียว กทม. */
+    transition: all 0.3s ease-in-out;
+    width: 280px;
+    z-index: 40;
+}
+
+.bkk-sidebar.collapsed {
+    width: 80px;
+}
+
+.bkk-sidebar.collapsed .sidebar-text,
+.bkk-sidebar.collapsed .sidebar-title {
+    display: none;
 }
 
 .nav-link {
-    color: #a7f3d0;
-    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.95rem;
     font-weight: 500;
 }
 
@@ -21,30 +33,31 @@ body {
 }
 
 .nav-link.active {
-    background: #059669;
+    background: #059669; /* เขียวสว่างสำหรับเมนูที่เลือก */
     color: white;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-/* Cards */
+/* 1.1 ปรับปรุง Mobile Nav ให้เป็นสีเขียว กทม. */
+.mobile-nav {
+    background: #12643a;
+    color: white;
+}
+
+.mobile-nav button {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.mobile-nav button.active {
+    color: white;
+}
+
+/* Cards & Components */
 .stat-card {
     background: white;
     padding: 1.5rem;
     border-radius: 1.25rem;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-}
-
-.stat-card .label {
-    font-size: 0.75rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    margin-bottom: 0.5rem;
-}
-
-.stat-card .value {
-    font-size: 2.25rem;
-    font-weight: 800;
-    letter-spacing: -0.025em;
 }
 
 .glass-card {
@@ -54,25 +67,7 @@ body {
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
-.chart-title {
-    font-weight: 700;
-    color: #1e293b;
-    font-size: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-}
-
-.chart-title::before {
-    content: "";
-    display: block;
-    width: 6px;
-    height: 20px;
-    background: #12643a;
-    border-radius: 99px;
-}
-
-/* Animations & Spinners */
+/* Animations */
 .animate-in { animation: fadeIn 0.4s ease-out; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
