@@ -1,86 +1,95 @@
-/* version 00035 */
+/* version 00036 */
 body {
     font-family: 'Sarabun', sans-serif;
     color: #334155;
+    background-color: #f8fafc;
 }
 
-/* 1. ปรับปรุง Sidebar ให้เป็นสีเขียว กทม. และรองรับการพับเก็บ */
+/* 1. แก้ไขแถบเมนูสีเขียว กทม. */
 .bkk-sidebar {
-    background: #12643a; /* สีเขียว กทม. */
-    transition: all 0.3s ease-in-out;
-    width: 280px;
-    z-index: 40;
+    background-color: #12643a !important; /* บังคับสีเขียวเข้ม กทม. */
+    color: white;
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 260px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
 }
 
+/* สถานะเมื่อพับ Sidebar */
 .bkk-sidebar.collapsed {
     width: 80px;
 }
 
 .bkk-sidebar.collapsed .sidebar-text,
-.bkk-sidebar.collapsed .sidebar-title {
+.bkk-sidebar.collapsed .sidebar-title-text {
     display: none;
 }
 
 .nav-link {
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 0.95rem;
-    font-weight: 500;
+    color: rgba(255, 255, 255, 0.9);
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    border-radius: 0.75rem;
+    margin-bottom: 0.5rem;
+    transition: all 0.2s;
+    white-space: nowrap;
 }
 
 .nav-link:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.15);
     color: white;
 }
 
 .nav-link.active {
-    background: #059669; /* เขียวสว่างสำหรับเมนูที่เลือก */
+    background: #059669; /* เขียวสว่าง */
     color: white;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* 1.1 ปรับปรุง Mobile Nav ให้เป็นสีเขียว กทม. */
+/* 2. แก้ไข Scroll Bar */
+#main-content {
+    flex: 1;
+    overflow-y: auto !important; /* บังคับให้เลื่อนได้ */
+    -webkit-overflow-scrolling: touch; /* สำหรับ iOS */
+}
+
+/* สไตล์เมนู Mobile */
 .mobile-nav {
-    background: #12643a;
+    background-color: #12643a;
     color: white;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
 }
 
 .mobile-nav button {
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(255, 255, 255, 0.7);
 }
 
 .mobile-nav button.active {
     color: white;
 }
 
-/* Cards & Components */
-.stat-card {
-    background: white;
-    padding: 1.5rem;
-    border-radius: 1.25rem;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+/* ตารางที่เลื่อนได้บน Desktop */
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
-.glass-card {
-    background: white;
-    border-radius: 1.25rem;
-    border: 1px solid #f1f5f9;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-}
-
-/* Animations */
-.animate-in { animation: fadeIn 0.4s ease-out; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
+/* สไตล์ทั่วไป */
 .spinner {
     border: 4px solid #f1f5f9;
     border-top: 4px solid #12643a;
     border-radius: 50%;
-    width: 48px;
-    height: 48px;
+    width: 40px;
+    height: 40px;
     animation: spin 1s linear infinite;
 }
 @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: #f1f5f9; }
-::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+.animate-in { animation: fadeIn 0.3s ease-out; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
