@@ -10,7 +10,7 @@ body {
     background-color: linear-gradient(180deg, #0a3d24 0%, #12643a 100%);/* #044226 !important; /* ปรับเป็นสีเขียวเข้มตามรูปภาพที่ส่งมา */
     color: #a7f3d0; /*white;*/
     transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    width: 260px;
+    width: 200px;
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
