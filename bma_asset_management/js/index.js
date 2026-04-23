@@ -1,5 +1,5 @@
 /**
- * version 00046 (Based on 00041)
+ * version 00048
  * แก้ไข: 1. เพิ่ม toggleSidebar() สำหรับปุ่ม Hamburger
  * 2. เพิ่ม setTimeout ใน renderCurrentPage() เพื่อแก้ปัญหากราฟไม่แสดง
  */
@@ -120,10 +120,12 @@ function filterTable() {
     const query = document.getElementById('searchInput')?.value.toLowerCase() || "";
     const rowSelect = document.getElementById('rowSelect');
     
+    // อ่านค่า rowsPerPage จาก dropdown
     if (rowSelect) {
         rowsPerPage = rowSelect.value === 'All' ? globalData.length : parseInt(rowSelect.value);
     }
 
+    // ค้นหาข้อมูลตาม query
     const filtered = globalData.filter(item => 
         (item.type && item.type.toLowerCase().includes(query)) || 
         (item.id && item.id.toLowerCase().includes(query)) ||
@@ -131,12 +133,13 @@ function filterTable() {
         (item.owner && item.owner.toLowerCase().includes(query))
     );
     
+    // ตัดข้อมูลตามจำนวนที่เลือก
     const paginatedData = filtered.slice(0, rowsPerPage);
 
     if (isMobile) {
         if (typeof renderMobileTable === 'function') renderMobileTable(paginatedData);
         const countElM = document.getElementById('show-count-m');
-        if (countElM) countElM.innerText = `แสดง ${paginatedData.length} จาก ${filtered.length}`;
+        if (countElM) countElM.innerText = `แสดง ${paginatedData.length} จาก ${filtered.length} รายการ`;
     } else {
         if (typeof renderDesktopTable === 'function') renderDesktopTable(paginatedData);
         const countEl = document.getElementById('show-count');
