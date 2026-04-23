@@ -38,22 +38,22 @@ function toggleSidebar() {
     localStorage.setItem('sidebarCollapsed', isCollapsed);
     
     // เปลี่ยนไอคอนปุ่ม Hamburger (เป็นไอคอน X เมื่อพับ)
-    const hamburgerBtn = sidebar.querySelector('button');
-    if (hamburgerBtn) {
-        if (isCollapsed) {
-            hamburgerBtn.innerHTML = `
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-            `;
-        } else {
-            hamburgerBtn.innerHTML = `
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                </svg>
-            `;
-        }
-    }
+    // const hamburgerBtn = sidebar.querySelector('button');
+    // if (hamburgerBtn) {
+    //    if (isCollapsed) {
+    //        hamburgerBtn.innerHTML = `
+    //            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    //                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+    //           </svg>
+    //        `;
+    //    } else {
+    //        hamburgerBtn.innerHTML = `
+    //            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    //                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+    //            </svg>
+    //        `;
+    //    }
+    //}
     
     // ปรับขนาดกราฟหลังจาก sidebar เปลี่ยนขนาด (หน่วงเวลาให้ CSS transition เสร็จ)
     setTimeout(() => {
@@ -76,13 +76,13 @@ function loadSidebarState() {
     if (isCollapsed) {
         sidebar.classList.add('collapsed');
         // เปลี่ยนไอคอนเป็น X
-        const hamburgerBtn = sidebar.querySelector('button');
-        if (hamburgerBtn) {
-            hamburgerBtn.innerHTML = `
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-            `;
+        // const hamburgerBtn = sidebar.querySelector('button');
+        // if (hamburgerBtn) {
+        //    hamburgerBtn.innerHTML = `
+        //        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        //            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        //        </svg>
+        //    `;
         }
     }
 }
