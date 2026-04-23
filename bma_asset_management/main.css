@@ -1,16 +1,30 @@
-/* version 00040 */
+/* version 00041 */
 body {
     font-family: 'Sarabun', sans-serif;
     color: #334155;
     background-color: #f8fafc;
+    margin: 0;
+    padding: 0;
 }
 
-/* Sidebar & Mobile Nav Base Styling */
-.bkk-sidebar, .md\:hidden.fixed.bottom-0 {
-    background-color: #12643a !important; /* สีเขียว กทม. */
+/* Sidebar Styling */
+.bkk-sidebar {
+    background-color: #12643a !important; 
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    height: 100vh;
 }
 
-/* Nav Links ใน Sidebar (Desktop) */
+.bkk-sidebar.collapsed {
+    width: 85px;
+}
+
+.bkk-sidebar.collapsed .sidebar-text,
+.bkk-sidebar.collapsed .sidebar-version,
+.bkk-sidebar.collapsed .sidebar-title-text {
+    display: none;
+}
+
+/* Nav Links ใน Sidebar */
 .nav-link {
     color: rgba(255, 255, 255, 0.6);
     background: transparent;
@@ -24,41 +38,33 @@ body {
 }
 
 .nav-link.active {
-    background: #0ea85d !important; /* สีเขียวสว่างสำหรับปุ่มที่เลือก */
+    background: #0ea85d !important; 
     color: white !important;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-/* Mobile Nav Buttons Styling */
-#m-btn-dashboard, #m-btn-inventory {
-    background: transparent;
-    border: none;
-    outline: none;
-}
-
-/* เมื่อ Mobile Button ถูกเลือก */
-#m-btn-dashboard.text-white, #m-btn-inventory.text-white {
-    color: white !important;
-    opacity: 1;
-}
-
-#m-btn-dashboard.text-white\/50, #m-btn-inventory.text-white\/50 {
-    color: rgba(255, 255, 255, 0.5) !important;
-}
-
-/* สำหรับ index.js ในการสลับสีปุ่ม Mobile */
-.mobile-active {
-    color: white !important;
-}
-
-.mobile-inactive {
-    color: rgba(255, 255, 255, 0.5) !important;
-}
-
-/* Scroll Management */
+/* Scroll Management: สำคัญมาก */
 #main-content {
-    -webkit-overflow-scrolling: touch;
+    overflow-y: auto !important; /* บังคับให้ Scroll ในแนวตั้งได้ */
+    overflow-x: hidden;
+    height: 100%;
     scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch; /* สำหรับ iOS ให้เลื่อนลื่นไหล */
+}
+
+/* ปรับแต่ง Scrollbar ให้ดูสวยงาม (สำหรับ Chrome/Edge) */
+#main-content::-webkit-scrollbar {
+    width: 6px;
+}
+#main-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+#main-content::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+#main-content::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
 }
 
 /* Spinner */
@@ -71,3 +77,12 @@ body {
     animation: spin 1s linear infinite;
 }
 @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+/* Utility Classes สำหรับหน้ากากตอนเปลี่ยน Tab */
+.animate-in {
+    animation: fadeIn 0.4s ease-out;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
