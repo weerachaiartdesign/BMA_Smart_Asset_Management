@@ -1,8 +1,7 @@
-<!-- version 00050 -->
+<!-- version 00054 -->
 <!-- 
   ไฟล์: assets-list.html
-  หน้าที่: Template แสดงรายการทรัพย์สิน (ตารางสำหรับ Desktop และ การ์ดสำหรับ Mobile)
-  ฟังก์ชันเด่น: รองรับการค้นหา (Filter) และเลือกจำนวนรายการที่แสดงต่อหน้า
+  หน้าที่: Template แสดงรายการทรัพย์สิน
 -->
 
 <!-- ส่วนตารางสำหรับ Desktop -->
@@ -25,7 +24,7 @@
           </select>
           <label class="text-xs text-slate-500">รายการ</label>
         </div>
-        <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="ค้นหาเลขครุภัณฑ์, รายการ, หน่วยงาน..." 
+        <input type="text" id="searchInput" onkeyup="filterTable(true)" placeholder="ค้นหาเลขครุภัณฑ์, รายการ, หน่วยงาน..." 
                class="px-4 py-2 border border-slate-200 rounded-lg text-sm w-80 focus:outline-none focus:ring-2 focus:ring-emerald-500">
       </div>
     </div>
@@ -44,7 +43,8 @@
             <th class="px-6 py-4 text-center">จัดการ</th>
           </tr>
         </thead>
-        <tbody id="table-body" class="divide-y divide-slate-100"></tbody>
+        <tbody id="table-body" class="divide-y divide-slate-100">
+        </tbody>
       </table>
     </div>
   </div>
@@ -57,19 +57,20 @@
       <label class="text-sm text-slate-600 font-medium">แสดงรายการ</label>
       <select id="rowSelectMobile" onchange="filterTable()" 
               class="px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white">
-        <option value="25">25</option>
-        <option value="50">50</option>
-        <option value="100">100</option>
+        <option value="25">25 รายการ</option>
+        <option value="50" selected>50 รายการ</option>
+        <option value="100">100 รายการ</option>
         <option value="All">ทั้งหมด</option>
       </select>
     </div>
     <div>
-      <input type="text" id="searchInputMobile" onkeyup="filterTable()" placeholder="ค้นหาทรัพย์สิน..." 
+      <input type="text" id="searchInputMobile" onkeyup="filterTable(true)" placeholder="ค้นหาทรัพย์สิน..." 
              class="w-full px-4 py-3 rounded-xl border border-slate-200 shadow-sm text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
     </div>
     <div class="text-right">
       <span id="show-count-m" class="text-xs text-slate-400"></span>
     </div>
   </div>
-  <div id="mobile-list" class="space-y-4"></div>
+  <div id="mobile-list" class="space-y-4">
+  </div>
 </div>
