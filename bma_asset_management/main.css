@@ -1,82 +1,83 @@
-/* version 00044 */
-@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap');
-
+/* version 00045 (Fixed based on 00041) */
 body {
     font-family: 'Sarabun', sans-serif;
+    color: #334155;
+    background-color: #f8fafc;
     margin: 0;
-    overflow: hidden;
+    padding: 0;
 }
 
-/* Sidebar ค้างไว้ที่เดิมแต่ปรับขนาด */
+/* Sidebar Styling */
 .bkk-sidebar {
     background-color: #12643a !important; 
     transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     height: 100vh;
-    z-index: 50;
-    flex-shrink: 0;
 }
 
-/* เมื่อพับ Sidebar */
 .bkk-sidebar.collapsed {
-    width: 80px;
+    width: 85px;
 }
 
+/* ซ่อนตัวอักษรตอนพับเมนู */
 .bkk-sidebar.collapsed .sidebar-text,
 .bkk-sidebar.collapsed .sidebar-version,
-.bkk-sidebar.collapsed .sidebar-title-text,
-.bkk-sidebar.collapsed .sidebar-footer {
-    display: none !important;
+.bkk-sidebar.collapsed .sidebar-title-text {
+    display: none;
 }
 
-.bkk-sidebar.collapsed .nav-link {
-    justify-content: center;
-    padding: 12px 0;
-}
-
+/* Nav Links ใน Sidebar */
 .nav-link {
     color: rgba(255, 255, 255, 0.6);
     background: transparent;
-    transition: all 0.2s;
-    border-radius: 12px;
-    margin: 4px 12px;
+    border: none;
+    outline: none;
+}
+
+.nav-link:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
 }
 
 .nav-link.active {
     background: #0ea85d !important; 
     color: white !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-.nav-link:hover:not(.active) {
-    background: rgba(255, 255, 255, 0.1);
-}
-
-/* พื้นที่แสดงผลหลัก */
+/* Scroll Management: สำคัญมาก */
 #main-content {
-    flex-grow: 1;
     overflow-y: auto !important;
-    height: 100vh;
-    background-color: #f8fafc;
+    overflow-x: hidden;
+    height: 100%;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
 }
 
-/* ปุ่ม Hamburger */
-#sidebar-toggle-btn {
-    cursor: pointer;
-    border-radius: 8px;
-    padding: 8px;
-}
-#sidebar-toggle-btn:hover {
-    background: rgba(255, 255, 255, 0.1);
-}
-
-/* แก้ไขปัญหากราฟล้น */
+/* ป้องกันกราฟล้นจอเวลาพับเมนู */
 canvas {
     max-width: 100% !important;
 }
 
-.animate-in {
-    animation: fadeIn 0.4s ease-out forwards;
-}
+/* ปรับแต่ง Scrollbar */
+#main-content::-webkit-scrollbar { width: 6px; }
+#main-content::-webkit-scrollbar-track { background: transparent; }
+#main-content::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+#main-content::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
+/* Spinner */
+.spinner {
+    border: 3px solid #f1f5f9;
+    border-top: 3px solid #12643a;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+.animate-in {
+    animation: fadeIn 0.4s ease-out;
+}
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
