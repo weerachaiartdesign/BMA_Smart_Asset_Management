@@ -1,5 +1,5 @@
 /**
- * version 00053
+ * version 00054
  * ไฟล์: main.css
  * หน้าที่: จัดการสไตล์หลักของระบบ BMA Assets Management
  * 
@@ -417,4 +417,40 @@ tbody tr:hover {
 
 .skip-to-content:focus {
     top: 0;
+}
+
+/* Animation สำหรับการคลิกการ์ด (Mobile) */
+.active\:scale-98:active {
+    transform: scale(0.98);
+}
+
+/* Cursor pointer สำหรับแถวที่คลิกได้ */
+.cursor-pointer {
+    cursor: pointer;
+}
+
+/* Modal Styles (ถ้าไม่โหลดจาก asset-detail.html) */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-container {
+    position: relative;
+    background: white;
+    border-radius: 24px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
 }
