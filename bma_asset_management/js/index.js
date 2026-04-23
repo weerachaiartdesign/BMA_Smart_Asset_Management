@@ -1,7 +1,7 @@
 /**
- * version 00043
+ * version 00044
  * ไฟล์: index.js
- * หน้าที่: จัดการการนำทาง, การพับเมนู, และควบคุมการวาดกราฟ
+ * หน้าที่: ควบคุมการพับ Sidebar, การสลับหน้า และการวาดกราฟให้แสดงผลถูกต้อง
  */
 
 let globalData = [];    
@@ -20,33 +20,34 @@ window.onresize = () => {
 };
 
 /**
- * toggleSidebar: ฟังก์ชันสำหรับพับ/กางเมนู Sidebar (Desktop)
+ * toggleSidebar: จัดการการพับ/กางเมนู และ resize กราฟ
  */
 function toggleSidebar() {
     const sidebar = document.getElementById('sidebar');
     if (sidebar) {
         sidebar.classList.toggle('collapsed');
         
-        // บันทึกสถานะไว้ใน LocalStorage
         const isCollapsed = sidebar.classList.contains('collapsed');
         localStorage.setItem('sidebarCollapsed', isCollapsed);
         
-        // สำคัญ: ต้องแจ้งให้ Chart ปรับขนาดตามพื้นที่ที่เปลี่ยนไป
+        // ให้เวลา CSS transition ทำงานเสร็จก่อนค่อย resize กราฟ
         setTimeout(() => {
             Object.values(charts).forEach(chart => {
-                if (typeof chart.resize === 'function') chart.resize();
+                if (chart && typeof chart.resize === 'function') {
+                    chart.resize();
+                }
             });
-        }, 300);
+        }, 310); 
     }
 }
 
 /**
- * fetchData: ดึงข้อมูลจาก API
+ * fetchData: ดึงข้อมูลจาก Google Sheets
  */
 async function fetchData() {
     const loadingText = document.getElementById('loading-text');
     try {
-        if (typeof WEB_APP_URL === 'undefined') throw new Error("กรุณาตั้งค่า WEB_APP_URL");
+        if (typeof WEB_APP_URL === 'undefined') throw new Error("ไม่พบ WEB_APP_URL");
         
         const response = await fetch(WEB_APP_URL);
         globalData = await response.json();
@@ -58,7 +59,7 @@ async function fetchData() {
             loading.style.opacity = '0';
             setTimeout(() => {
                 loading.classList.add('hidden');
-                // คืนค่าสถานะ Sidebar จาก LocalStorage
+                // เรียกคืนสถานะ Sidebar
                 if (localStorage.getItem('sidebarCollapsed') === 'true') {
                     document.getElementById('sidebar')?.classList.add('collapsed');
                 }
@@ -81,7 +82,7 @@ function switchTab(tabId) {
 }
 
 /**
- * renderCurrentPage: แสดงผลหน้าปัจจุบัน และสั่งวาดกราฟใหม่
+ * renderCurrentPage: โหลด HTML และเรียกฟังก์ชันวาดข้อมูล
  */
 async function renderCurrentPage() {
     const mainContent = document.getElementById('main-content');
@@ -97,64 +98,55 @@ async function renderCurrentPage() {
         mainContent.innerHTML = html;
         pageTitle.innerText = currentTab === 'dashboard' ? 'ภาพรวมระบบ' : 'รายการทรัพย์สิน';
 
-        // หลังจากฉีด HTML เข้าไปแล้ว ต้องสั่งให้ฟังก์ชันในไฟล์อื่นทำงาน
-        if (currentTab === 'dashboard') {
-            // รอให้ DOM อัปเดตแป๊บหนึ่งก่อนวาดกราฟ
+        // วาดกราฟหรือตารางหลังจากเนื้อหาเข้าสู่ DOM
+        requestAnimationFrame(() => {
             setTimeout(() => {
-                if (isMobile) {
-                    if (typeof renderMobileDashboard === 'function') renderMobileDashboard(globalData);
+                if (currentTab === 'dashboard') {
+                    if (isMobile) {
+                        if (typeof renderMobileDashboard === 'function') renderMobileDashboard(globalData);
+                    } else {
+                        if (typeof renderDesktopDashboard === 'function') renderDesktopDashboard(globalData);
+                    }
                 } else {
-                    if (typeof renderDesktopDashboard === 'function') renderDesktopDashboard(globalData);
+                    if (isMobile) {
+                        if (typeof renderMobileTable === 'function') renderMobileTable(globalData);
+                    } else {
+                        if (typeof renderDesktopTable === 'function') renderDesktopTable(globalData);
+                    }
                 }
-            }, 50);
-        } else {
-            setTimeout(() => {
-                if (isMobile) {
-                    if (typeof renderMobileTable === 'function') renderMobileTable(globalData);
-                } else {
-                    if (typeof renderDesktopTable === 'function') renderDesktopTable(globalData);
-                }
-            }, 50);
-        }
+            }, 100); // ดีเลย์เล็กน้อยเพื่อให้ Canvas พร้อม
+        });
+
     } catch (err) {
-        mainContent.innerHTML = `<div class="p-8 text-red-500 font-bold">เกิดข้อผิดพลาด: ${err.message}</div>`;
+        mainContent.innerHTML = `<div class="p-8 text-red-500 font-bold">Error: ${err.message}</div>`;
     }
 }
 
 /**
- * updateNavUI: เปลี่ยนสีปุ่มเมนูตามสถานะ Active
+ * updateNavUI: เปลี่ยนสีปุ่มเมนู
  */
 function updateNavUI() {
-    const tabs = ['dashboard', 'inventory'];
-    tabs.forEach(t => {
-        // Desktop
+    ['dashboard', 'inventory'].forEach(t => {
         const btn = document.getElementById(`btn-${t}`);
-        if (btn) {
-            t === currentTab ? btn.classList.add('active') : btn.classList.remove('active');
-        }
-        // Mobile
+        if (btn) t === currentTab ? btn.classList.add('active') : btn.classList.remove('active');
+        
         const mBtn = document.getElementById(`m-btn-${t}`);
         if (mBtn) {
             if (t === currentTab) {
-                mBtn.classList.remove('text-white/50');
-                mBtn.classList.add('text-white');
+                mBtn.classList.replace('text-white/50', 'text-white');
             } else {
-                mBtn.classList.remove('text-white');
-                mBtn.classList.add('text-white/50');
+                mBtn.classList.replace('text-white', 'text-white/50');
             }
         }
     });
 }
 
-/**
- * filterTable: ฟังก์ชันค้นหา
- */
 function filterTable() {
     const query = document.getElementById('searchInput')?.value.toLowerCase() || "";
     const filtered = globalData.filter(item => 
-        (item.type && item.type.toLowerCase().includes(query)) || 
-        (item.id && item.id.toLowerCase().includes(query)) ||
-        (item.dept && item.dept.toLowerCase().includes(query))
+        (item.type?.toLowerCase().includes(query)) || 
+        (item.id?.toLowerCase().includes(query)) ||
+        (item.dept?.toLowerCase().includes(query))
     );
     
     if (isMobile) {
@@ -164,16 +156,11 @@ function filterTable() {
     }
 }
 
-/**
- * groupAndSortData: ช่วยจัดกลุ่มข้อมูล
- */
 function groupAndSortData(data, key, limit) {
     const counts = data.reduce((acc, curr) => {
         const val = curr[key] || 'ไม่ระบุ';
         acc[val] = (acc[val] || 0) + 1;
         return acc;
     }, {});
-    return Object.entries(counts)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, limit);
+    return Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, limit);
 }
