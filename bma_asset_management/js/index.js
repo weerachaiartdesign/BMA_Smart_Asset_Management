@@ -1,31 +1,36 @@
 /**
  * version 00049
- * แก้ไข: 1. เพิ่ม toggleSidebar() สำหรับปุ่ม Hamburger
- * 2. เพิ่ม setTimeout ใน renderCurrentPage() เพื่อแก้ปัญหากราฟไม่แสดง
+ * ไฟล์: index.js
+ * หน้าที่: จัดการการแสดงผลข้อมูลทรัพย์สินในรูปแบบตาราง (Desktop) และการ์ด (Mobile)
+ * รองรับ: Pagination (25/50/100/ทั้งหมด), การค้นหาแบบ Real-time, Responsive Desktop/Mobile
  */
+
 let globalData = [];
 let charts = {};
 let currentTab = 'dashboard';
 let isMobile = window.innerWidth < 768;
 let rowsPerPage = 25;
+let searchTimeout = null;
+
+// ==================== INITIALIZATION ====================
 
 window.onload = fetchData;
 
 window.onresize = () => {
     const newIsMobile = window.innerWidth < 768;
-    if(newIsMobile !== isMobile) {
+    if (newIsMobile !== isMobile) {
         isMobile = newIsMobile;
         renderCurrentPage();
     }
 };
 
-// --- จุดที่ 1: ฟังก์ชันสำหรับพับเมนู Hamburger ---
+// ==================== SIDEBAR FUNCTIONS ====================
+
 function toggleSidebar() {
     const sidebar = document.getElementById('sidebar');
     if (sidebar) {
         sidebar.classList.toggle('collapsed');
         
-        // ให้กราฟปรับขนาดตามพื้นที่ที่เปลี่ยนไป (หน่วงเวลาให้ CSS ย่อเมนูเสร็จก่อน)
         setTimeout(() => {
             Object.values(charts).forEach(chart => {
                 if (chart && typeof chart.resize === 'function') {
@@ -35,7 +40,8 @@ function toggleSidebar() {
         }, 350);
     }
 }
-// ------------------------------------------
+
+// ==================== DATA FETCHING ====================
 
 async function fetchData() {
     const loadingText = document.getElementById('loading-text');
@@ -59,6 +65,8 @@ async function fetchData() {
     }
 }
 
+// ==================== TAB NAVIGATION ====================
+
 function switchTab(tabId) {
     currentTab = tabId;
     updateNavUI(tabId);
@@ -66,15 +74,15 @@ function switchTab(tabId) {
 }
 
 function updateNavUI(tabId) {
-    // Desktop
+    // Desktop navigation
     document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
     const btn = document.getElementById('btn-' + tabId);
-    if(btn) btn.classList.add('active');
+    if (btn) btn.classList.add('active');
 
-    // Mobile
+    // Mobile bottom navigation
     const mDash = document.getElementById('m-btn-dashboard');
     const mInv = document.getElementById('m-btn-inventory');
-    if(mDash && mInv) {
+    if (mDash && mInv) {
         if (tabId === 'dashboard') {
             mDash.classList.replace('text-white/50', 'text-white');
             mInv.classList.replace('text-white', 'text-white/50');
@@ -85,8 +93,10 @@ function updateNavUI(tabId) {
     }
     
     const titleEl = document.getElementById('page-title');
-    if(titleEl) titleEl.innerText = tabId === 'dashboard' ? 'ภาพรวมระบบ' : 'รายการทรัพย์สิน';
+    if (titleEl) titleEl.innerText = tabId === 'dashboard' ? 'ภาพรวมระบบ' : 'รายการทรัพย์สิน';
 }
+
+// ==================== PAGE RENDERING ====================
 
 async function renderCurrentPage() {
     const mainContent = document.getElementById('main-content');
@@ -99,26 +109,45 @@ async function renderCurrentPage() {
         mainContent.innerHTML = await res.text();
         mainContent.scrollTop = 0;
 
-        // --- จุดที่ 2: ใช้ setTimeout รอให้เบราว์เซอร์สร้าง HTML (Canvas) ให้เสร็จก่อนวาดกราฟ ---
         setTimeout(() => {
             if (currentTab === 'dashboard') {
                 if (typeof renderDesktopDashboard === 'function' && typeof renderMobileDashboard === 'function') {
                     isMobile ? renderMobileDashboard(globalData) : renderDesktopDashboard(globalData);
                 }
             } else {
-                filterTable(); 
+                executeFilter(); // ใช้ executeFilter แทน filterTable เพื่อโหลดข้อมูลทันที
             }
         }, 150);
-        // ---------------------------------------------------------------------------------
 
     } catch (err) {
         mainContent.innerHTML = `<div class="p-8 text-red-500">Error: ${err.message}</div>`;
     }
 }
 
-function filterTable() {
+// ==================== FILTER & PAGINATION ====================
+
+/**
+ * ฟังก์ชันหลักสำหรับกรองและแบ่งหน้าข้อมูล
+ * @param {boolean} isSearchEvent - true = มาจากการพิมพ์ค้นหา (debounce), false = มาจากการเปลี่ยน dropdown
+ */
+function filterTable(isSearchEvent = false) {
+    if (isSearchEvent) {
+        // Debounce สำหรับการค้นหา
+        if (searchTimeout) clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            executeFilter();
+        }, 300);
+    } else {
+        executeFilter();
+    }
+}
+
+/**
+ * ฟังก์ชัน执行การกรองและแสดงผลจริง
+ */
+function executeFilter() {
+    // 1. อ่านค่า query จากการค้นหา (แยกตามอุปกรณ์)
     const query = (() => {
-        // ใช้ searchInput ตามอุปกรณ์
         if (isMobile) {
             return document.getElementById('searchInputMobile')?.value.toLowerCase() || "";
         } else {
@@ -126,28 +155,32 @@ function filterTable() {
         }
     })();
     
-    // ใช้ rowSelect ตามอุปกรณ์
+    // 2. อ่านค่า rowsPerPage จาก dropdown (แยกตามอุปกรณ์)
     const rowSelect = isMobile 
         ? document.getElementById('rowSelectMobile') 
         : document.getElementById('rowSelectDesktop');
     
-    // อ่านค่า rowsPerPage จาก dropdown
     if (rowSelect) {
         rowsPerPage = rowSelect.value === 'All' ? globalData.length : parseInt(rowSelect.value);
-        console.log(`[filterTable] isMobile=${isMobile}, rowsPerPage=${rowsPerPage}`); // debug
+        console.log(`[executeFilter] isMobile=${isMobile}, rowsPerPage=${rowsPerPage}, query="${query}"`); // debug log
     }
 
-    // ค้นหาข้อมูลตาม query
+    // 3. กรองข้อมูลตามคำค้นหา
     const filtered = globalData.filter(item => 
         (item.type && item.type.toLowerCase().includes(query)) || 
         (item.id && item.id.toLowerCase().includes(query)) ||
         (item.dept && item.dept.toLowerCase().includes(query)) ||
-        (item.owner && item.owner.toLowerCase().includes(query))
+        (item.owner && item.owner.toLowerCase().includes(query)) ||
+        (item.brand && item.brand.toLowerCase().includes(query)) ||
+        (item.model && item.model.toLowerCase().includes(query)) ||
+        (item.serial && item.serial.toLowerCase().includes(query)) ||
+        (item.location && item.location.toLowerCase().includes(query))
     );
     
-    // ตัดข้อมูลตามจำนวนที่เลือก
+    // 4. ตัดข้อมูลตามจำนวนที่เลือก (Pagination)
     const paginatedData = filtered.slice(0, rowsPerPage);
 
+    // 5. แสดงผลตามอุปกรณ์
     if (isMobile) {
         if (typeof renderMobileTable === 'function') renderMobileTable(paginatedData);
         const countElM = document.getElementById('show-count-m');
@@ -159,11 +192,20 @@ function filterTable() {
     }
 }
 
+// ==================== HELPER FUNCTIONS ====================
+
+/**
+ * ฟังก์ชันจัดกลุ่มและเรียงลำดับข้อมูลสำหรับกราฟ
+ * @param {Array} data - ข้อมูลทรัพย์สิน
+ * @param {string} key - ชื่อฟิลด์ที่ต้องการจัดกลุ่ม (เช่น 'type', 'dept')
+ * @param {number} limit - จำนวนสูงสุดที่ต้องการแสดง
+ * @returns {Object} - Object ที่มี key เป็นชื่อกลุ่ม และ value เป็นจำนวน
+ */
 function groupAndSortData(data, key, limit) {
     const counts = data.reduce((acc, curr) => {
         const val = curr[key] || 'ไม่ระบุ';
         acc[val] = (acc[val] || 0) + 1;
         return acc;
     }, {});
-    return Object.fromEntries(Object.entries(counts).sort((a,b) => b[1]-a[1]).slice(0, limit));
+    return Object.fromEntries(Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, limit));
 }
