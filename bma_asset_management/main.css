@@ -1,23 +1,22 @@
-/* version 00043 */
+/* version 00044 */
 body {
     font-family: 'Sarabun', sans-serif;
     margin: 0;
+    overflow: hidden; /* ล็อคไม่ให้ Body เลื่อน แต่ให้ Main Content เลื่อนแทน */
 }
 
-/* Sidebar Layout */
+/* Sidebar Styling */
 .bkk-sidebar {
     background-color: #12643a !important; 
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     height: 100vh;
     z-index: 50;
-    position: relative;
+    flex-shrink: 0;
 }
 
 /* เมื่อพับ Sidebar */
 .bkk-sidebar.collapsed {
     width: 80px;
-    padding-left: 1rem;
-    padding-right: 1rem;
 }
 
 .bkk-sidebar.collapsed .sidebar-text,
@@ -31,17 +30,13 @@ body {
     padding: 12px 0;
 }
 
-.bkk-sidebar.collapsed .nav-link svg {
-    width: 24px;
-    height: 24px;
-}
-
 /* Nav Links */
 .nav-link {
     color: rgba(255, 255, 255, 0.6);
     background: transparent;
-    border-radius: 12px;
-    margin-bottom: 4px;
+    transition: all 0.2s;
+    border: none;
+    cursor: pointer;
 }
 
 .nav-link.active {
@@ -49,31 +44,37 @@ body {
     color: white !important;
 }
 
-/* Main Content Scroll */
-#main-content {
-    overflow-y: auto !important;
-    height: 100%;
-    -webkit-overflow-scrolling: touch;
-}
-
-/* Scrollbar Styling */
-#main-content::-webkit-scrollbar { width: 6px; }
-#main-content::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-
-/* Hamburger Button Hover */
-button[onclick="toggleSidebar()"] {
-    cursor: pointer;
-    padding: 8px;
-    border-radius: 8px;
-}
-button[onclick="toggleSidebar()"]:hover {
+.nav-link:hover:not(.active) {
     background: rgba(255, 255, 255, 0.1);
 }
 
-.animate-in {
-    animation: fadeIn 0.4s ease-out;
+/* Content Area */
+#main-content {
+    flex-grow: 1;
+    overflow-y: auto !important;
+    height: 100vh;
+    background-color: #f8fafc;
 }
+
+/* Hamburger Button */
+#sidebar-toggle-btn {
+    transition: background 0.2s;
+    z-index: 60;
+}
+#sidebar-toggle-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Chart Canvas Fix */
+canvas {
+    max-width: 100% !important;
+}
+
+.animate-in {
+    animation: fadeIn 0.4s ease-out forwards;
+}
+
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(5px); }
+    from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
 }
