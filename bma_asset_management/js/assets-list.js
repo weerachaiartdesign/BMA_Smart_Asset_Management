@@ -1,5 +1,5 @@
 /**
- * version 00034
+ * version 00045
  * ไฟล์: assets-list.js
  * หน้าที่: จัดการการแสดงผลข้อมูลทรัพย์สินในรูปแบบตาราง (Desktop) และการ์ด (Mobile)
  */
@@ -18,26 +18,26 @@ function renderDesktopTable(data) {
   }
 
   body.innerHTML = data.map(item => `
-    <tr class="hover:bg-slate-50 transition border-b border-slate-100">
-      <td class="px-6 py-4 font-mono text-xs font-bold text-slate-400">${item.id}</td>
-      <td class="px-6 py-4 text-sm font-bold text-slate-700">${item.type}</td>
+    <tr class="hover:bg-slate-50 transition border-b border-slate-100 cursor-pointer" onclick="showAssetDetail(${JSON.stringify(item).replace(/"/g, '&quot;')})">
+      <td class="px-6 py-4 font-mono text-xs font-bold text-slate-400">${escapeHtml(item.id)}</td>
+      <td class="px-6 py-4 text-sm font-bold text-slate-700">${escapeHtml(item.type)}</td>
       <td class="px-6 py-4 text-xs text-slate-500">
-        <div class="font-bold text-slate-700">${item.brand || '-'}</div>
-        <div>${item.model || '-'}</div>
-        <div class="text-[10px] opacity-60">SN: ${item.serial || '-'}</div>
+        <div class="font-bold text-slate-700">${escapeHtml(item.brand || '-')}</div>
+        <div>${escapeHtml(item.model || '-')}</div>
+        <div class="text-[10px] opacity-60">SN: ${escapeHtml(item.serial || '-')}</div>
       </td>
       <td class="px-6 py-4 text-xs">
-        <div class="font-bold text-slate-700">${item.dept}</div>
-        <div class="text-slate-500 mb-1">${item.location}</div>
-        <div class="inline-block px-2 py-0.5 bg-emerald-50 text-emerald-600 rounded-md font-bold">${item.owner}</div>
+        <div class="font-bold text-slate-700">${escapeHtml(item.dept)}</div>
+        <div class="text-slate-500 mb-1">${escapeHtml(item.location)}</div>
+        <div class="inline-block px-2 py-0.5 bg-emerald-50 text-emerald-600 rounded-md font-bold">${escapeHtml(item.owner)}</div>
       </td>
       <td class="px-6 py-4 text-center">
         <span class="px-3 py-1 rounded-full text-[10px] font-bold ${item.status.includes('ปกติ') ? 'bg-emerald-100 text-emerald-700' : 'bg-orange-100 text-orange-700'}">
-          ${item.status}
+          ${escapeHtml(item.status)}
         </span>
       </td>
       <td class="px-6 py-4 text-center">
-        ${item.url ? `<a href="${item.url}" target="_blank" class="text-emerald-600 hover:text-emerald-800 font-bold text-xs underline">ลิงก์ข้อมูล</a>` : '-'}
+        ${item.url ? `<a href="${item.url}" target="_blank" class="text-emerald-600 hover:text-emerald-800 font-bold text-xs underline" onclick="event.stopPropagation()">ลิงก์ข้อมูล</a>` : '-'}
       </td>
     </tr>
   `).join('');
@@ -57,23 +57,36 @@ function renderMobileTable(data) {
   }
 
   container.innerHTML = data.map(item => `
-    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 mb-3 animate-in">
+    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 mb-3 animate-in cursor-pointer active:scale-98 transition-transform" onclick="showAssetDetail(${JSON.stringify(item).replace(/"/g, '&quot;')})">
       <div class="flex justify-between items-start mb-2">
-        <span class="text-[10px] font-mono font-bold text-slate-400">#${item.id}</span>
+        <span class="text-[10px] font-mono font-bold text-slate-400">#${escapeHtml(item.id)}</span>
         <span class="text-[9px] px-2 py-0.5 rounded-full font-bold ${item.status.includes('ปกติ') ? 'bg-emerald-50 text-emerald-600' : 'bg-orange-50 text-orange-600'}">
-          ${item.status}
+          ${escapeHtml(item.status)}
         </span>
       </div>
-      <h4 class="font-bold text-slate-800 text-sm mb-1">${item.type}</h4>
+      <h4 class="font-bold text-slate-800 text-sm mb-1">${escapeHtml(item.type)}</h4>
       <div class="text-[11px] text-slate-500 space-y-1 border-l-2 border-slate-100 pl-3">
-        <div class="font-bold text-slate-700">${item.brand || ''} ${item.model || ''}</div>
-        <div><i class="opacity-50">หน่วยงาน:</i> ${item.dept}</div>
-        <div class="text-emerald-600 font-bold"><i class="opacity-50">ผู้ดูแล:</i> ${item.owner}</div>
+        <div class="font-bold text-slate-700">${escapeHtml(item.brand || '')} ${escapeHtml(item.model || '')}</div>
+        <div><i class="opacity-50">หน่วยงาน:</i> ${escapeHtml(item.dept)}</div>
+        <div class="text-emerald-600 font-bold"><i class="opacity-50">ผู้ดูแล:</i> ${escapeHtml(item.owner)}</div>
       </div>
       ${item.url ? `
       <div class="mt-3 pt-2 border-t border-slate-50 flex justify-end">
-        <a href="${item.url}" target="_blank" class="text-emerald-600 text-[10px] font-bold flex items-center gap-1">รายละเอียด →</a>
+        <a href="${item.url}" target="_blank" class="text-emerald-600 text-[10px] font-bold flex items-center gap-1" onclick="event.stopPropagation()">รายละเอียด →</a>
       </div>` : ''}
     </div>
   `).join('');
+}
+
+/**
+ * ฟังก์ชันป้องกัน XSS (แปลง HTML special characters)
+ */
+function escapeHtml(str) {
+  if (!str) return '';
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }
