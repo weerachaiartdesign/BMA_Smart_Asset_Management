@@ -1,108 +1,72 @@
-/* version 00046 (Based on 00041) */
-body {
-    font-family: 'Sarabun', sans-serif;
-    color: #334155;
-    background-color: #f8fafc;
-    margin: 0;
-    padding: 0;
-}
+/**
+ * version 00050
+ * ไฟล์: main.css
+ * หน้าที่: จัดการสไตล์หลักของระบบ รวมถึง Sidebar แบบพับได้
+ */
 
-/* Sidebar Styling */
+/* Sidebar Styles */
 .bkk-sidebar {
-    background-color: #12643a !important; 
-    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), padding 0.3s ease;
-    height: 100vh;
+    transition: all 0.3s ease-in-out;
+    width: 288px; /* w-72 = 18rem = 288px */
 }
 
-/* 1. แก้ไขให้พับได้จริง โดยบังคับใช้ !important เพื่อชนะ Tailwind */
+/* สถานะเมื่อ Sidebar ถูกพับ */
 .bkk-sidebar.collapsed {
-    width: 85px !important;
-    padding-left: 1rem !important;
-    padding-right: 1rem !important;
+    width: 80px !important;
 }
 
-.bkk-sidebar.collapsed .sidebar-text,
-.bkk-sidebar.collapsed .sidebar-version,
+/* ซ่อนข้อความเมนูเมื่อ sidebar พับ */
+.bkk-sidebar.collapsed .sidebar-text {
+    display: none;
+}
+
+/* ซ่อนข้อความ title เมื่อ sidebar พับ */
 .bkk-sidebar.collapsed .sidebar-title-text {
-    display: none !important;
+    display: none;
 }
 
-/* จัดให้ Icon อยู่ตรงกลางเมื่อพับ */
+/* ปรับ padding ของปุ่มเมนูเมื่อ sidebar พับ */
 .bkk-sidebar.collapsed .nav-link {
     justify-content: center;
-    padding-left: 0;
-    padding-right: 0;
-}
-.bkk-sidebar.collapsed .nav-link svg {
-    margin-right: 0 !important;
+    padding: 1rem !important;
 }
 
-/* Nav Links ใน Sidebar */
-.nav-link {
-    color: rgba(255, 255, 255, 0.6);
-    background: transparent;
-    border: none;
-    outline: none;
+.bkk-sidebar.collapsed .nav-link svg {
+    margin: 0 !important;
+}
+
+/* ปรับ container ของ logo เมื่อ sidebar พับ */
+.bkk-sidebar.collapsed .flex.items-center.justify-between {
+    justify-content: center !important;
+}
+
+.bkk-sidebar.collapsed .flex.items-center.justify-between .flex.items-center.gap-3 {
+    display: none;
+}
+
+/* ปรับตำแหน่งปุ่ม Hamburger เมื่อ sidebar พับ */
+.bkk-sidebar.collapsed button {
+    position: absolute;
+    right: -12px;
+    top: 24px;
+    background: #12643a;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
     display: flex;
     align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
 }
 
-.nav-link:hover {
-    background: rgba(255, 255, 255, 0.05);
-    color: white;
-}
-
-.nav-link.active {
-    background: #0ea85d !important; 
-    color: white !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-/* Scroll Management: สำคัญมาก */
+/* Animation สำหรับ content เมื่อ sidebar เปลี่ยนขนาด */
 #main-content {
-    overflow-y: auto !important; /* บังคับให้ Scroll ในแนวตั้งได้ */
-    overflow-x: hidden;
-    height: 100%;
-    scroll-behavior: smooth;
-    -webkit-overflow-scrolling: touch; /* สำหรับ iOS ให้เลื่อนลื่นไหล */
+    transition: width 0.3s ease-in-out;
 }
 
-/* 2. ป้องกันกราฟล้นและแก้กราฟเบี้ยวเวลาพับเมนู */
-canvas {
-    max-width: 100% !important;
-}
-
-/* ปรับแต่ง Scrollbar ให้ดูสวยงาม (สำหรับ Chrome/Edge) */
-#main-content::-webkit-scrollbar {
-    width: 6px;
-}
-#main-content::-webkit-scrollbar-track {
-    background: transparent;
-}
-#main-content::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-    border-radius: 10px;
-}
-#main-content::-webkit-scrollbar-thumb:hover {
-    background: #94a3b8;
-}
-
-/* Spinner */
-.spinner {
-    border: 3px solid #f1f5f9;
-    border-top: 3px solid #12643a;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    animation: spin 1s linear infinite;
-}
-@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-/* Utility Classes สำหรับหน้ากากตอนเปลี่ยน Tab */
-.animate-in {
-    animation: fadeIn 0.4s ease-out;
-}
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+/* Responsive: เมื่อ sidebar พับในขนาดกลางขึ้นไป */
+@media (min-width: 768px) {
+    .bkk-sidebar.collapsed + .flex-1 {
+        margin-left: 0;
+    }
 }
