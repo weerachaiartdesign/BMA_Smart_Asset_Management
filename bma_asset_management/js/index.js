@@ -1,15 +1,17 @@
 /**
- * version 00036
- * หัวใจหลัก: จัดการการพับ Sidebar และการ Scroll หน้าจอ
+ * version 00034
+ * ไฟล์: index.js
+ * หน้าที่: หัวใจหลักของระบบ จัดการการนำทาง (Navigation), การโหลดข้อมูล (Fetch API), และการสลับหน้าจอตามอุปกรณ์ (Responsive)
  */
-let globalData = [];
-let charts = {};
-let currentTab = 'dashboard';
+
+let globalData = [];    // เก็บข้อมูลทรัพย์สินทั้งหมดที่โหลดมาจาก API
+let charts = {};        // เก็บ Instance ของ Chart.js เพื่อใช้ทำลายกราฟเก่าก่อนสร้างใหม่
+let currentTab = 'dashboard'; 
 let isMobile = window.innerWidth < 768;
-let rowsPerPage = 25;
 
-window.onload = fetchData;
+window.onload = fetchData; // เริ่มโหลดข้อมูลทันทีเมื่อเปิดเว็บ
 
+// ตรวจสอบการเปลี่ยนขนาดหน้าจอเพื่อสลับ Layout
 window.onresize = () => {
     const newIsMobile = window.innerWidth < 768;
     if(newIsMobile !== isMobile) {
@@ -19,21 +21,19 @@ window.onresize = () => {
 };
 
 /**
- * 3. ฟังก์ชันพับ Sidebar (Desktop)
+ * fetchData: ดึงข้อมูลจาก Google Sheets (ผ่าน Web App URL)
  */
-function toggleSidebar() {
-    const sidebar = document.getElementById('sidebar');
-    if (sidebar) {
-        sidebar.classList.toggle('collapsed');
-    }
-}
-
 async function fetchData() {
     const loadingText = document.getElementById('loading-text');
     try {
+        if (typeof WEB_APP_URL === 'undefined') throw new Error("กรุณาตั้งค่า WEB_APP_URL ใน api-config.js");
+        
         const response = await fetch(WEB_APP_URL);
         globalData = await response.json();
         
+        if (globalData.error) throw new Error(globalData.error);
+        
+        // ซ่อนหน้า Loading เมื่อโหลดสำเร็จ
         const loading = document.getElementById('loading');
         if (loading) {
             loading.style.opacity = '0';
@@ -41,18 +41,24 @@ async function fetchData() {
         }
         renderCurrentPage();
     } catch (err) {
-        if (loadingText) loadingText.innerHTML = `<span class="text-red-500">ผิดพลาด: ${err.message}</span>`;
+        if (loadingText) loadingText.innerHTML = `<span class="text-red-600">เกิดข้อผิดพลาด: ${err.message}</span>`;
+        console.error(err);
     }
 }
 
+/**
+ * switchTab: สลับเมนูหน้าจอ (Dashboard / รายการทรัพย์สิน)
+ */
 function switchTab(tabId) {
     currentTab = tabId;
     updateNavUI(tabId);
     renderCurrentPage();
 }
 
+/**
+ * updateNavUI: เปลี่ยนสีและสไตล์ของเมนูที่ถูกเลือก
+ */
 function updateNavUI(tabId) {
-    // อัปเดตเมนู Desktop
     document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
     const btn = document.getElementById('btn-' + tabId);
     if(btn) btn.classList.add('active');
@@ -61,13 +67,18 @@ function updateNavUI(tabId) {
     const mDash = document.getElementById('m-btn-dashboard');
     const mInv = document.getElementById('m-btn-inventory');
     if(mDash && mInv) {
-        mDash.classList.toggle('active', tabId === 'dashboard');
-        mInv.classList.toggle('active', tabId === 'inventory');
+        const activeColor = '#059669', inactiveColor = '#94a3b8';
+        mDash.style.color = tabId === 'dashboard' ? activeColor : inactiveColor;
+        mInv.style.color = tabId === 'inventory' ? activeColor : inactiveColor;
     }
     
-    document.getElementById('page-title').innerText = tabId === 'dashboard' ? 'ภาพรวมระบบ' : 'รายการทรัพย์สิน';
+    const titleEl = document.getElementById('page-title');
+    if(titleEl) titleEl.innerText = tabId === 'dashboard' ? 'Dashboard สรุปภาพรวม' : 'บัญชีทรัพย์สินทั้งหมด';
 }
 
+/**
+ * renderCurrentPage: โหลดไฟล์ HTML Template และส่งข้อมูลไป Render ตามหน้าจอที่เลือก
+ */
 async function renderCurrentPage() {
     const mainContent = document.getElementById('main-content');
     if (!mainContent) return;
@@ -76,49 +87,46 @@ async function renderCurrentPage() {
     
     try {
         const res = await fetch(fileName);
+        if (!res.ok) throw new Error(`โหลดไฟล์เทมเพลตไม่สำเร็จ (${fileName})`);
         mainContent.innerHTML = await res.text();
 
-        // เมื่อโหลดเสร็จ ให้เลื่อนไปบนสุดเสมอ
-        mainContent.scrollTop = 0;
-
+        // ตรวจสอบหน้าและส่งข้อมูลไปให้ฟังก์ชันใน dashboard.js หรือ assets-list.js
         if (currentTab === 'dashboard') {
-            isMobile ? renderMobileDashboard(globalData) : renderDesktopDashboard(globalData);
+            if (typeof renderDesktopDashboard === 'function' && typeof renderMobileDashboard === 'function') {
+                isMobile ? renderMobileDashboard(globalData) : renderDesktopDashboard(globalData);
+            }
         } else {
-            filterTable(); 
+            if (typeof renderDesktopTable === 'function' && typeof renderMobileTable === 'function') {
+                isMobile ? renderMobileTable(globalData) : renderDesktopTable(globalData);
+            }
         }
     } catch (err) {
-        mainContent.innerHTML = `<div class="p-8 text-red-500">Error: ${err.message}</div>`;
+        mainContent.innerHTML = `<div class="p-8 text-red-500 font-bold">เกิดข้อผิดพลาดในการโหลดเนื้อหา: ${err.message}</div>`;
     }
 }
 
 /**
- * 2. ฟังก์ชันกรองข้อมูลและคุมการแสดงผล (Pagination)
+ * filterTable: ฟังก์ชันค้นหาข้อมูล (เรียกจาก input onkeyup ใน HTML)
  */
 function filterTable() {
     const query = document.getElementById('searchInput')?.value.toLowerCase() || "";
-    const rowSelect = document.getElementById('rowSelect');
-    
-    if (rowSelect) {
-        rowsPerPage = rowSelect.value === 'All' ? globalData.length : parseInt(rowSelect.value);
-    }
-
     const filtered = globalData.filter(item => 
-        Object.values(item).some(val => String(val).toLowerCase().includes(query))
+        (item.type && item.type.toLowerCase().includes(query)) || 
+        (item.id && item.id.toLowerCase().includes(query)) ||
+        (item.dept && item.dept.toLowerCase().includes(query)) ||
+        (item.owner && item.owner.toLowerCase().includes(query))
     );
     
-    const paginatedData = filtered.slice(0, rowsPerPage);
-
     if (isMobile) {
-        renderMobileTable(paginatedData);
-        const countElM = document.getElementById('show-count-m');
-        if (countElM) countElM.innerText = `แสดง ${paginatedData.length} จาก ${filtered.length}`;
+        if (typeof renderMobileTable === 'function') renderMobileTable(filtered);
     } else {
-        renderDesktopTable(paginatedData);
-        const countEl = document.getElementById('show-count');
-        if (countEl) countEl.innerText = `แสดง ${paginatedData.length} จาก ${filtered.length} รายการ`;
+        if (typeof renderDesktopTable === 'function') renderDesktopTable(filtered);
     }
 }
 
+/**
+ * groupAndSortData: ฟังก์ชันช่วยจัดกลุ่มข้อมูล (Helper Function)
+ */
 function groupAndSortData(data, key, limit) {
     const counts = data.reduce((acc, curr) => {
         const val = curr[key] || 'ไม่ระบุ';
