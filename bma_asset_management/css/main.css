@@ -1,25 +1,94 @@
 /**
- * version 00052
+ * version 00053
  * ไฟล์: main.css
- * หน้าที่: จัดการสไตล์หลักของระบบ รวมถึง Sidebar แบบซ่อน/แสดง
+ * หน้าที่: จัดการสไตล์หลักของระบบ BMA Assets Management
+ * 
+ * ฟังก์ชันหลัก:
+ * 1. จัดการสไตล์ของ Sidebar (เมนูด้านข้าง) รวมถึงการซ่อน/แสดง
+ * 2. จัดการ Animation และ Transition ต่างๆ
+ * 3. ควบคุมการแสดงผลบนอุปกรณ์ Responsive (Desktop/Tablet/Mobile)
+ * 4. จัดการ Loading Spinner
+ * 5. จัดการ Navigation Links (ปุ่มเมนู)
+ * 
+ * รองรับ:
+ * - Sidebar แบบซ่อน/แสดง (toggle)
+ * - ปุ่ม Hamburger ใน Header
+ * - การปรับขนาดกราฟอัตโนมัติ
+ * - Responsive Design (ใช้ Tailwind CSS ร่วมด้วย)
  */
 
-/* Sidebar Styles */
-.bkk-sidebar {
-    transition: all 0.3s ease-in-out;
-    width: 288px; /* w-72 = 18rem = 288px */
+/* ============================================
+   GLOBAL STYLES & RESET
+   ============================================ */
+
+/* Smooth scrolling สำหรับทั้งระบบ */
+html {
+    scroll-behavior: smooth;
 }
 
-/* 🔽 สถานะเมื่อ Sidebar ถูกซ่อน (หายไปเลย) */
+/* Custom scrollbar สำหรับ Webkit browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* ============================================
+   LOADING SCREEN (หน้าโหลดข้อมูล)
+   ============================================ */
+
+/* Spinner animation สำหรับ loading screen */
+.spinner {
+    width: 48px;
+    height: 48px;
+    border: 4px solid #e2e8f0;
+    border-top: 4px solid #12643a;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ============================================
+   SIDEBAR STYLES (เมนูด้านข้าง)
+   ============================================ */
+
+/* สไตล์หลักของ Sidebar */
+.bkk-sidebar {
+    transition: all 0.3s ease-in-out;  /* Smooth transition สำหรับทุก property */
+    width: 288px;  /* ความกว้างปกติ = w-72 (18rem = 288px) */
+    position: relative;
+    z-index: 40;
+}
+
+/* ========== สถานะที่ 1: Sidebar แบบ HIDDEN (ซ่อนทั้งหมด) ========== */
+/* ใช้เมื่อกดปุ่ม Hamburger แล้วต้องการให้ Sidebar หายไปเลย */
 .bkk-sidebar.hidden-sidebar {
     width: 0px !important;
     padding-left: 0 !important;
     padding-right: 0 !important;
-    overflow: hidden;
-    opacity: 0;
+    overflow: hidden;      /* ซ่อนเนื้อหาที่ล้นออกมา */
+    opacity: 0;            /* ทำให้โปร่งใส */
+    visibility: hidden;    /* ซ่อนจากการมองเห็น */
 }
 
-/* ซ่อนข้อความทั้งหมดเมื่อซ่อน sidebar */
+/* ซ่อนข้อความและองค์ประกอบทั้งหมดเมื่อ Sidebar ถูกซ่อน */
 .bkk-sidebar.hidden-sidebar .sidebar-text,
 .bkk-sidebar.hidden-sidebar .sidebar-title-text,
 .bkk-sidebar.hidden-sidebar .sidebar-version,
@@ -28,7 +97,7 @@
     display: none !important;
 }
 
-/* ซ่อนปุ่มเมนูทั้งหมด */
+/* ซ่อนปุ่มเมนูทั้งหมดเมื่อ Sidebar ถูกซ่อน */
 .bkk-sidebar.hidden-sidebar .nav-link {
     width: 0px !important;
     padding: 0 !important;
@@ -36,28 +105,316 @@
     overflow: hidden;
 }
 
-/* ปรับ container ของ logo */
+/* ซ่อน container ของ logo */
 .bkk-sidebar.hidden-sidebar .flex.items-center.justify-between {
     justify-content: center !important;
     padding: 0 !important;
     margin: 0 !important;
 }
 
-.bkk-sidebar.hidden-sidebar .flex.items-center.justify-between .flex.items-center.gap-3 {
-    display: none !important;
+/* ========== สถานะที่ 2: Sidebar แบบ COLLAPSED (พับแต่ยังเหลือไอคอน) ========== */
+/* ใช้สำหรับกรณีที่ต้องการให้เหลือเฉพาะไอคอน (ปัจจุบันอาจไม่ใช้ แต่保留ไว้เผื่อ未来) */
+.bkk-sidebar.collapsed {
+    width: 80px !important;
 }
 
-/* ปุ่ม Hamburger สวยงาม */
+/* ซ่อนข้อความเมนูเมื่อ sidebar พับ */
+.bkk-sidebar.collapsed .sidebar-text {
+    display: none;
+}
+
+/* ซ้อนข้อความ title เมื่อ sidebar พับ */
+.bkk-sidebar.collapsed .sidebar-title-text {
+    display: none;
+}
+
+/* ปรับ padding ของปุ่มเมนูเมื่อ sidebar พับ */
+.bkk-sidebar.collapsed .nav-link {
+    justify-content: center;
+    padding: 1rem !important;
+}
+
+.bkk-sidebar.collapsed .nav-link svg {
+    margin: 0 !important;
+}
+
+/* ปรับ container ของ logo เมื่อ sidebar พับ */
+.bkk-sidebar.collapsed .flex.items-center.justify-between {
+    justify-content: center !important;
+}
+
+.bkk-sidebar.collapsed .flex.items-center.justify-between .flex.items-center.gap-3 {
+    display: none;
+}
+
+/* ปรับรูป logo เมื่อ sidebar พับ */
+.bkk-sidebar.collapsed img {
+    margin: 0 auto !important;
+}
+
+/* ============================================
+   SIDEBAR TEXT STYLES (การจัดการตัวอักษรใน Sidebar)
+   ============================================ */
+
+/* ปรับขนาดตัวอักษรชื่อโปรแกรมใน Sidebar */
+.sidebar-title-text h1 {
+    font-size: 1rem;        /* 16px - เล็กลงจากเดิมเพื่อให้พอดี */
+    line-height: 1.25;      /* ระยะห่างระหว่างบรรทัด */
+    font-weight: 700;
+}
+
+.sidebar-title-text p {
+    font-size: 0.7rem;      /* ~11px */
+    opacity: 0.7;
+    margin-top: 2px;
+}
+
+/* ============================================
+   NAVIGATION LINKS (ปุ่มเมนู)
+   ============================================ */
+
+/* สไตล์ปุ่มเมนูปกติ */
+.nav-link {
+    transition: all 0.2s ease;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* สไตล์เมื่อ hover ที่ปุ่มเมนู */
+.nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    transform: translateX(4px);  /* ขยับไปทางขวาเล็กน้อย */
+}
+
+/* สไตล์เมื่อปุ่มเมนูถูกเลือก (active) */
+.nav-link.active {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: white;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* ============================================
+   HAMBURGER BUTTON (ปุ่ม ≡ สำหรับซ่อน/แสดง Sidebar)
+   ============================================ */
+
+/* สไตล์หลักของปุ่ม Hamburger */
 #hamburgerBtn {
     transition: all 0.2s ease;
+    cursor: pointer;
 }
 
+/* สไตล์เมื่อ hover ที่ปุ่ม Hamburger */
 #hamburgerBtn:hover {
-    background-color: #f1f5f9;
+    background-color: #f1f5f9;  /* slate-50 */
     transform: scale(1.05);
 }
 
-/* Animation สำหรับ content */
+/* สไตล์เมื่อคลิก (active) */
+#hamburgerBtn:active {
+    transform: scale(0.95);
+}
+
+/* ============================================
+   MAIN CONTENT AREA (พื้นที่แสดงข้อมูลหลัก)
+   ============================================ */
+
+/* Animation สำหรับการเปลี่ยนขนาดเมื่อ Sidebar ซ่อน/แสดง */
 #main-content {
     transition: all 0.3s ease-in-out;
+}
+
+/* Animation สำหรับการแสดงผลเนื้อหา (fade in) */
+.animate-in {
+    animation: fadeInUp 0.4s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ============================================
+   CARD & GLASS EFFECTS (การ์ดและเอฟเฟกต์โปร่งใส)
+   ============================================ */
+
+/* สไตล์การ์ดแบบกระจก (Glass morphism) */
+.glass-card {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* สไตล์หัวข้อกราฟ */
+.chart-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #1e293b;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    border-left: 3px solid #12643a;
+    padding-left: 12px;
+}
+
+/* ============================================
+   TABLE STYLES (สไตล์ตาราง)
+   ============================================ */
+
+/* สไตล์ hover สำหรับแถวตาราง */
+tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+tbody tr:hover {
+    background-color: #f8fafc;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN (การแสดงผลตามขนาดหน้าจอ)
+   ============================================ */
+
+/* สำหรับขนาด Tablet (768px - 1024px) */
+@media (min-width: 768px) and (max-width: 1024px) {
+    /* แสดงปุ่ม Hamburger บน Tablet */
+    #hamburgerBtn {
+        display: flex !important;
+    }
+    
+    /* ปรับ padding ของ Sidebar */
+    .bkk-sidebar {
+        width: 260px;
+    }
+}
+
+/* สำหรับขนาด Desktop (1025px ขึ้นไป) */
+@media (min-width: 1025px) {
+    /* แสดงปุ่ม Hamburger บน Desktop */
+    #hamburgerBtn {
+        display: flex !important;
+    }
+}
+
+/* สำหรับขนาด Mobile (ต่ำกว่า 768px) */
+@media (max-width: 767px) {
+    /* ปรับ font size สำหรับมือถือ */
+    .chart-title {
+        font-size: 0.65rem;
+    }
+    
+    /* ปรับ padding ของการ์ด */
+    .glass-card {
+        padding: 0.75rem;
+    }
+    
+    /* ปรับ Spinner ขนาดเล็กลง */
+    .spinner {
+        width: 32px;
+        height: 32px;
+        border-width: 3px;
+    }
+}
+
+/* ============================================
+   UTILITY CLASSES (คลาสช่วยเหลือเพิ่มเติม)
+   ============================================ */
+
+/* ปุ่มสถานะต่างๆ */
+.status-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.65rem;
+    font-weight: 700;
+}
+
+.status-normal {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.status-broken {
+    background-color: #ffedd5;
+    color: #9a3412;
+}
+
+.status-waiting {
+    background-color: #f1f5f9;
+    color: #475569;
+}
+
+/* การ์ดสถิติ */
+.stat-card {
+    transition: all 0.2s ease;
+    cursor: default;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+/* ============================================
+   PRINT STYLES (สำหรับการพิมพ์)
+   ============================================ */
+
+@media print {
+    /* ซ่อน Sidebar และปุ่มต่างๆ เมื่อพิมพ์ */
+    .bkk-sidebar,
+    #hamburgerBtn,
+    .fixed.bottom-0,
+    header {
+        display: none !important;
+    }
+    
+    /* ปรับพื้นที่เนื้อหาให้เต็มหน้า */
+    #main-content {
+        margin: 0;
+        padding: 0;
+        overflow: visible;
+    }
+    
+    /* สีพื้นหลังเป็นสีขาว */
+    body {
+        background: white;
+    }
+}
+
+/* ============================================
+   DARK MODE SUPPORT (รองรับธีมมืด - เตรียมไว้)
+   ============================================ */
+
+@media (prefers-color-scheme: dark) {
+    /* สามารถเพิ่ม Dark Mode ได้ในอนาคต */
+    /* .dark-mode-enabled จะเปิดใช้งานเมื่อต้องการ */
+}
+
+/* ============================================
+   ACCESSIBILITY (การช่วยเหลือการเข้าถึง)
+   ============================================ */
+
+/* Focus visible สำหรับ keyboard navigation */
+:focus-visible {
+    outline: 2px solid #12643a;
+    outline-offset: 2px;
+}
+
+/* Skip to content link (สำหรับ screen reader) */
+.skip-to-content {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: #12643a;
+    color: white;
+    padding: 8px;
+    z-index: 100;
+    text-decoration: none;
+}
+
+.skip-to-content:focus {
+    top: 0;
 }
