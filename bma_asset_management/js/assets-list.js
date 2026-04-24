@@ -39,7 +39,7 @@ function renderDesktopTable(data) {
         </span>
       </td>
       <td class="px-6 py-4 text-center">
-        ${item.url ? `<a href="${item.url}" target="_blank" class="text-emerald-600 hover:text-emerald-800 font-bold text-xs underline" onclick="event.stopPropagation()">ลิงก์ข้อมูล</a>` : '-'}
+        ${item.url ? `<a href="${item.url}" target="_blank" class="text-emerald-600 hover:text-emerald-800 font-bold text-xs underline" onclick="event.stopPropagation()">MIS Link</a>` : '-'}
       </td>
     </tr>
   `).join('');
@@ -78,7 +78,7 @@ function renderMobileTable(data) {
       </div>
       ${item.url ? `
       <div class="mt-3 pt-2 border-t border-slate-50 flex justify-end">
-        <a href="${item.url}" target="_blank" class="text-emerald-600 text-[10px] font-bold flex items-center gap-1" onclick="event.stopPropagation()">รายละเอียด →</a>
+        <a href="${item.url}" target="_blank" class="text-emerald-600 text-[10px] font-bold flex items-center gap-1" onclick="event.stopPropagation()">MIS Link →</a>
       </div>` : ''}
     </div>
   `).join('');
