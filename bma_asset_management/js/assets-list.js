@@ -30,8 +30,8 @@ function renderDesktopTable(data) {
       <td class="px-6 py-4 text-xs">
         <div class="font-bold text-slate-700">${escapeHtml(item.department || item.dept || '-')}</div>
         <div class="text-slate-500">ที่ตั้ง: ${escapeHtml(item.location_asset || item.location || '-')}</div>
-        <div class="text-slate-500">ปฏิบัติงาน: ${escapeHtml(item.workplace || '-')}</div>
         <div class="inline-block px-2 py-0.5 bg-emerald-50 text-emerald-600 rounded-md font-bold mt-1">ผู้ดูแล: ${escapeHtml(item.responsible_person || item.owner || '-')}</div>
+        <div class="text-slate-500">ปฏิบัติงาน: ${escapeHtml(item.workplace || '-')}</div>
        </td>
       <td class="px-6 py-4 text-center">
         <span class="px-3 py-1 rounded-full text-[10px] font-bold ${getStatusClass(item.status)}">
@@ -71,8 +71,8 @@ function renderMobileTable(data) {
         <div class="font-bold text-slate-700">${escapeHtml(item.brand || '')} ${escapeHtml(item.model || '')}</div>
         <div><span class="opacity-50">หน่วยงาน:</span> ${escapeHtml(item.department || item.dept || '-')}</div>
         <div><span class="opacity-50">ที่ตั้ง:</span> ${escapeHtml(item.location_asset || item.location || '-')}</div>
-        <div><span class="opacity-50">ปฏิบัติงาน:</span> ${escapeHtml(item.workplace || '-')}</div>
         <div class="text-emerald-600 font-bold"><span class="opacity-50">ผู้ดูแล:</span> ${escapeHtml(item.responsible_person || item.owner || '-')}</div>
+        <div><span class="opacity-50">ปฏิบัติงาน:</span> ${escapeHtml(item.workplace || '-')}</div>
       </div>
       ${item.url ? `
       <div class="mt-3 pt-2 border-t border-slate-50 flex justify-end">
