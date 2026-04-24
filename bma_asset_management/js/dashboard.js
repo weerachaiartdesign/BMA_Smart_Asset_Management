@@ -1,8 +1,34 @@
 /**
- * version 00056
+ * version 00055
  * ไฟล์: dashboard.js
  * หน้าที่: คำนวณข้อมูลทางสถิติและวาดกราฟ (Chart.js) สำหรับหน้า Dashboard
+ * ปรับปรุง: 
+ *   - เอาชื่อแกนกราฟออก (Desktop + Mobile)
+ *   - กราฟ Mobile แยกตามประเภท เปลี่ยนเป็นแนวนอน (horizontalBar) ให้เหมือนหน่วยงาน
+ *   - สีกราฟทั้งหมดแตกต่างกัน รองรับสูงสุด 20 สี
+ *   - เตรียมข้อมูล 20 อันดับ แต่ปรับจำนวนที่แสดงตามอุปกรณ์
  */
+
+// คลังสีสำหรับกราฟ (20 สี)
+const CHART_COLORS = [
+    '#064e3b', '#059669', '#10b981', '#34d399', '#6ee7b7',  // เขียว (5)
+    '#1e40af', '#3b82f6', '#60a5fa', '#93c5fd', '#bfdbfe',  // น้ำเงิน (5)
+    '#b45309', '#f59e0b', '#fbbf24', '#fcd34d', '#fde68a',  // ส้ม/เหลือง (5)
+    '#9d174d', '#ec4899', '#f472b6', '#f9a8d4', '#fbcfe8'   // ชมพู (5)
+];
+
+/**
+ * ฟังก์ชัน getChartColors: ดึงสีตามจำนวนที่ต้องการ
+ * @param {number} count - จำนวนสีที่ต้องการ
+ * @returns {Array} - รายการสี
+ */
+function getChartColors(count) {
+    const colors = [];
+    for (let i = 0; i < count; i++) {
+        colors.push(CHART_COLORS[i % CHART_COLORS.length]);
+    }
+    return colors;
+}
 
 /**
  * ฟังก์ชัน renderDesktopDashboard: ประมวลผลและอัปเดต UI สำหรับคอมพิวเตอร์
@@ -24,13 +50,18 @@ function renderDesktopDashboard(data) {
         if(el) el.innerText = stats[key].toLocaleString();
     });
 
-    // 3. เตรียมข้อมูลสำหรับกราฟ (จัดกลุ่มและดึง 10 อันดับแรก)
-    const typeMap = groupAndSortData(data, 'type', 10);
-    const deptMap = groupAndSortData(data, 'department', 10);
+    // 3. เตรียมข้อมูลสำหรับกราฟ (จัดกลุ่ม 20 อันดับ แต่แสดง 10 อันดับบน Desktop)
+    const typeMap = groupAndSortData(data, 'type', 20);
+    const deptMap = groupAndSortData(data, 'department', 20);
+    
+    const typeLabels = Object.keys(typeMap).slice(0, 10);
+    const typeValues = Object.values(typeMap).slice(0, 10);
+    const deptLabels = Object.keys(deptMap).slice(0, 10);
+    const deptValues = Object.values(deptMap).slice(0, 10);
 
     // 4. วาดกราฟ (Desktop ใช้แบบแนวตั้งปกติ)
-    updateChart('typeChart', 'doughnut', Object.keys(typeMap), Object.values(typeMap));
-    updateChart('deptChart', 'bar', Object.keys(deptMap), Object.values(deptMap));
+    updateChart('typeChart', 'doughnut', typeLabels, typeValues);
+    updateChart('deptChart', 'bar', deptLabels, deptValues);
 }
 
 /**
@@ -52,13 +83,18 @@ function renderMobileDashboard(data) {
         if(el) el.innerText = stats[k].toLocaleString();
     });
     
-    // เตรียมข้อมูลสำหรับกราฟ (จัดกลุ่มและดึง 10 อันดับแรก)
-    const typeMap = groupAndSortData(data, 'type', 10);
-    const deptMap = groupAndSortData(data, 'department', 10);
+    // เตรียมข้อมูลสำหรับกราฟ (จัดกลุ่ม 20 อันดับ แต่แสดง 6 อันดับบน Mobile)
+    const typeMap = groupAndSortData(data, 'type', 20);
+    const deptMap = groupAndSortData(data, 'department', 20);
+    
+    const typeLabels = Object.keys(typeMap).slice(0, 6);
+    const typeValues = Object.values(typeMap).slice(0, 6);
+    const deptLabels = Object.keys(deptMap).slice(0, 6);
+    const deptValues = Object.values(deptMap).slice(0, 6);
 
     // วาดกราฟมือถือ (เปลี่ยนประเภทเป็นแนวนอนทั้งคู่)
-    updateMobileChart('mTypeChart', 'horizontalBar', Object.keys(typeMap), Object.values(typeMap));
-    updateMobileChart('mDeptChart', 'horizontalBar', Object.keys(deptMap), Object.values(deptMap));
+    updateMobileChart('mTypeChart', 'horizontalBar', typeLabels, typeValues);
+    updateMobileChart('mDeptChart', 'horizontalBar', deptLabels, deptValues);
 }
 
 /**
@@ -74,6 +110,7 @@ function updateChart(id, type, labels, values) {
     if (charts[id]) charts[id].destroy();
 
     const isDoughnut = type === 'doughnut';
+    const colors = getChartColors(labels.length);
     
     charts[id] = new Chart(canvas, {
         type: type,
@@ -81,10 +118,12 @@ function updateChart(id, type, labels, values) {
             labels: labels,
             datasets: [{
                 data: values,
-                backgroundColor: isDoughnut 
-                    ? ['#064e3b', '#059669', '#10b981', '#34d399', '#6ee7b7', '#a7f3d0', '#d1fae5', '#ecfdf5']
-                    : '#059669',
-                borderRadius: isDoughnut ? 0 : 4
+                backgroundColor: isDoughnut ? colors : colors[0],
+                borderColor: isDoughnut ? '#ffffff' : 'transparent',
+                borderWidth: isDoughnut ? 2 : 0,
+                borderRadius: isDoughnut ? 0 : 4,
+                barPercentage: 0.7,
+                categoryPercentage: 0.8
             }]
         },
         options: { 
@@ -108,11 +147,13 @@ function updateChart(id, type, labels, values) {
                 y: {
                     beginAtZero: true,
                     ticks: { stepSize: 1, font: { size: 10 } },
-                    title: { display: false }  // เอาชื่อแกน Y ออก
+                    title: { display: false },
+                    grid: { color: '#e2e8f0' }
                 },
                 x: {
                     ticks: { font: { size: 9 }, rotation: -30, autoSkip: true, maxRotation: 45 },
-                    title: { display: false }  // เอาชื่อแกน X ออก
+                    title: { display: false },
+                    grid: { display: false }
                 }
             }
         }
@@ -133,16 +174,15 @@ function updateMobileChart(id, type, labels, values) {
 
     const isDoughnut = type === 'doughnut';
     const isHorizontalBar = type === 'horizontalBar';
+    const colors = getChartColors(labels.length);
     
     charts[id] = new Chart(canvas.getContext('2d'), {
-        type: 'bar',  // ใช้ bar เป็นหลัก
+        type: 'bar',
         data: {
             labels: labels,
             datasets: [{
                 data: values,
-                backgroundColor: isDoughnut 
-                    ? ['#064e3b', '#059669', '#10b981', '#34d399', '#6ee7b7', '#a7f3d0']
-                    : '#059669',
+                backgroundColor: isDoughnut ? colors : colors[0],
                 borderRadius: 4,
                 barPercentage: 0.7,
                 categoryPercentage: 0.8
@@ -167,21 +207,23 @@ function updateMobileChart(id, type, labels, values) {
             scales: {
                 x: {
                     display: !isHorizontalBar,
-                    title: { display: false },  // เอาชื่อแกน X ออก
+                    title: { display: false },
                     ticks: {
                         font: { size: 8 },
                         stepSize: 1,
                         autoSkip: true,
                         maxRotation: 45
-                    }
+                    },
+                    grid: { display: false }
                 },
                 y: {
                     display: true,
-                    title: { display: false },  // เอาชื่อแกน Y ออก
+                    title: { display: false },
                     ticks: {
                         font: { size: 8 },
                         stepSize: 1
-                    }
+                    },
+                    grid: { color: '#e2e8f0' }
                 }
             }
         }
@@ -192,18 +234,21 @@ function updateMobileChart(id, type, labels, values) {
  * ฟังก์ชัน groupAndSortData: จัดกลุ่มและเรียงลำดับข้อมูล
  * @param {Array} data - ข้อมูลทรัพย์สิน
  * @param {string} key - ชื่อฟิลด์ที่ต้องการจัดกลุ่ม
- * @param {number} limit - จำนวนสูงสุดที่ต้องการแสดง
+ * @param {number} limit - จำนวนสูงสุดที่ต้องการเก็บ (เผื่อไว้)
  * @returns {Object} - Object ที่มี key เป็นชื่อกลุ่ม และ value เป็นจำนวน
  */
 function groupAndSortData(data, key, limit) {
     const counts = data.reduce((acc, curr) => {
         let val = curr[key] || 'ไม่ระบุ';
-        // รองรับกรณี department เก็บใน dept
-        if (key === 'department' && (!val || val === 'ไม่ระบุ') && curr.dept) {
-            val = curr.dept;
+        // รองรับกรณี department เก็บใน dept หรือ responsible_person
+        if (key === 'department') {
+            if ((!val || val === 'ไม่ระบุ') && curr.dept) val = curr.dept;
+            if ((!val || val === 'ไม่ระบุ') && curr.responsible_person) val = curr.responsible_person;
         }
         acc[val] = (acc[val] || 0) + 1;
         return acc;
     }, {});
-    return Object.fromEntries(Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, limit));
+    const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+    // เก็บ limit อันดับ (เผื่อไว้ 20)
+    return Object.fromEntries(sorted.slice(0, limit));
 }
