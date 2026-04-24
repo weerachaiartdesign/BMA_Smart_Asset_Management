@@ -1,5 +1,5 @@
 /**
- * version 00034
+ * version 00055
  * ไฟล์: dashboard.js
  * หน้าที่: คำนวณข้อมูลทางสถิติและวาดกราฟ (Chart.js) สำหรับหน้า Dashboard
  */
