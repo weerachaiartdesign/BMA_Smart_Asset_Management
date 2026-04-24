@@ -4,28 +4,18 @@
  * หน้าที่: คำนวณข้อมูลทางสถิติและวาดกราฟ (Chart.js) สำหรับหน้า Dashboard
  */
 
-// คลังสีโทนเขียว 20 เฉด (เรียงจากเข้มไปอ่อน)
+// คลังสีโทนเขียว 10 เฉด (เรียงจากเข้มไปอ่อน)
 const GREEN_COLORS = [
     '#022c22',  // 1: เข้มที่สุด
-    '#043a2c',  // 2
-    '#064e3b',  // 3
-    '#075949',  // 4
-    '#065f46',  // 5
-    '#056b49',  // 6
-    '#047857',  // 7
-    '#059063',  // 8
-    '#059669',  // 9
-    '#0ba773',  // 10
-    '#10b981',  // 11
-    '#1fbd82',  // 12
-    '#34d399',  // 13
-    '#4ddcac',  // 14
-    '#6ee7b7',  // 15
-    '#8aecc5',  // 16
-    '#a7f3d0',  // 17
-    '#bcf5dc',  // 18
-    '#d1fae5',  // 19
-    '#ecfdf5'   // 20: อ่อนที่สุด
+    '#064e3b',  // 2
+    '#065f46',  // 3
+    '#047857',  // 4
+    '#059669',  // 5
+    '#10b981',  // 6
+    '#34d399',  // 7
+    '#6ee7b7',  // 8
+    '#a7f3d0',  // 9
+    '#d1fae5',  // 10
 ];
 
 /**
@@ -62,9 +52,9 @@ function renderDesktopDashboard(data) {
         if(el) el.innerText = stats[key].toLocaleString();
     });
 
-    // 3. เตรียมข้อมูลสำหรับกราฟ (จัดกลุ่ม 20 อันดับ แต่แสดง 10 อันดับบน Desktop)
-    const typeMap = groupAndSortData(data, 'type', 20);
-    const deptMap = groupAndSortData(data, 'department', 20);
+    // 3. เตรียมข้อมูลสำหรับกราฟ (จัดกลุ่ม 10 อันดับ แต่แสดง 10 อันดับบน Desktop)
+    const typeMap = groupAndSortData(data, 'type', 10);
+    const deptMap = groupAndSortData(data, 'department', 10);
     
     const typeLabels = Object.keys(typeMap).slice(0, 10);
     const typeValues = Object.values(typeMap).slice(0, 10);
@@ -95,9 +85,9 @@ function renderMobileDashboard(data) {
         if(el) el.innerText = stats[k].toLocaleString();
     });
     
-    // เตรียมข้อมูลสำหรับกราฟ (จัดกลุ่ม 20 อันดับ แต่แสดง 6 อันดับบน Mobile)
-    const typeMap = groupAndSortData(data, 'type', 20);
-    const deptMap = groupAndSortData(data, 'department', 20);
+    // เตรียมข้อมูลสำหรับกราฟ (จัดกลุ่ม 10 อันดับ แต่แสดง 6 อันดับบน Mobile)
+    const typeMap = groupAndSortData(data, 'type', 10);
+    const deptMap = groupAndSortData(data, 'department', 10);
     
     const typeLabels = Object.keys(typeMap).slice(0, 10);
     const typeValues = Object.values(typeMap).slice(0, 10);
