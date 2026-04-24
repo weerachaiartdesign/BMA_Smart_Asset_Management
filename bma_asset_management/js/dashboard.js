@@ -2,19 +2,14 @@
  * version 00055
  * ไฟล์: dashboard.js
  * หน้าที่: คำนวณข้อมูลทางสถิติและวาดกราฟ (Chart.js) สำหรับหน้า Dashboard
- * ปรับปรุง: 
- *   - เอาชื่อแกนกราฟออก (Desktop + Mobile)
- *   - กราฟ Mobile แยกตามประเภท เปลี่ยนเป็นแนวนอน (horizontalBar) ให้เหมือนหน่วยงาน
- *   - สีกราฟทั้งหมดแตกต่างกัน รองรับสูงสุด 20 สี
- *   - เตรียมข้อมูล 20 อันดับ แต่ปรับจำนวนที่แสดงตามอุปกรณ์
  */
 
 // คลังสีสำหรับกราฟ (20 สี)
-const CHART_COLORS = [
-    '#064e3b', '#059669', '#10b981', '#34d399', '#6ee7b7',  // เขียว (5)
-    '#1e40af', '#3b82f6', '#60a5fa', '#93c5fd', '#bfdbfe',  // น้ำเงิน (5)
-    '#b45309', '#f59e0b', '#fbbf24', '#fcd34d', '#fde68a',  // ส้ม/เหลือง (5)
-    '#9d174d', '#ec4899', '#f472b6', '#f9a8d4', '#fbcfe8'   // ชมพู (5)
+const GREEN_COLORS = [
+    '#022c22', '#043a2c', '#064e3b', '#075949', '#065f46',
+    '#056b49', '#047857', '#059063', '#059669', '#0ba773',
+    '#10b981', '#1fbd82', '#34d399', '#4ddcac', '#6ee7b7',
+    '#8aecc5', '#a7f3d0', '#bcf5dc', '#d1fae5', '#ecfdf5'
 ];
 
 /**
@@ -83,14 +78,14 @@ function renderMobileDashboard(data) {
         if(el) el.innerText = stats[k].toLocaleString();
     });
     
-    // เตรียมข้อมูลสำหรับกราฟ (จัดกลุ่ม 20 อันดับ แต่แสดง 6 อันดับบน Mobile)
+    // เตรียมข้อมูลสำหรับกราฟ (จัดกลุ่ม 20 อันดับ แต่แสดง 10 อันดับบน Mobile)
     const typeMap = groupAndSortData(data, 'type', 20);
     const deptMap = groupAndSortData(data, 'department', 20);
     
-    const typeLabels = Object.keys(typeMap).slice(0, 6);
-    const typeValues = Object.values(typeMap).slice(0, 6);
-    const deptLabels = Object.keys(deptMap).slice(0, 6);
-    const deptValues = Object.values(deptMap).slice(0, 6);
+    const typeLabels = Object.keys(typeMap).slice(0, 10);
+    const typeValues = Object.values(typeMap).slice(0, 10);
+    const deptLabels = Object.keys(deptMap).slice(0, 10);
+    const deptValues = Object.values(deptMap).slice(0, 10);
 
     // วาดกราฟมือถือ (เปลี่ยนประเภทเป็นแนวนอนทั้งคู่)
     updateMobileChart('mTypeChart', 'horizontalBar', typeLabels, typeValues);
@@ -118,7 +113,7 @@ function updateChart(id, type, labels, values) {
             labels: labels,
             datasets: [{
                 data: values,
-                backgroundColor: isDoughnut ? colors : colors[0],
+                backgroundColor: isDoughnut ? colors : colors,
                 borderColor: isDoughnut ? '#ffffff' : 'transparent',
                 borderWidth: isDoughnut ? 2 : 0,
                 borderRadius: isDoughnut ? 0 : 4,
@@ -182,7 +177,7 @@ function updateMobileChart(id, type, labels, values) {
             labels: labels,
             datasets: [{
                 data: values,
-                backgroundColor: isDoughnut ? colors : colors[0],
+                backgroundColor: isDoughnut ? colors : colors,
                 borderRadius: 4,
                 barPercentage: 0.7,
                 categoryPercentage: 0.8
