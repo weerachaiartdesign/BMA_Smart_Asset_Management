@@ -1,7 +1,8 @@
 /**
- * version 00045
+ * version 00055
  * ไฟล์: assets-list.js
  * หน้าที่: จัดการการแสดงผลข้อมูลทรัพย์สินในรูปแบบตาราง (Desktop) และการ์ด (Mobile)
+ * ปรับปรุง: แสดงหน่วยงาน/สถานที่/ผู้รับผิดชอบ ตามโครงสร้างใหม่
  */
 
 /**
@@ -25,21 +26,22 @@ function renderDesktopTable(data) {
         <div class="font-bold text-slate-700">${escapeHtml(item.brand || '-')}</div>
         <div>${escapeHtml(item.model || '-')}</div>
         <div class="text-[10px] opacity-60">SN: ${escapeHtml(item.serial || '-')}</div>
-      </td>
+       </td>
       <td class="px-6 py-4 text-xs">
-        <div class="font-bold text-slate-700">${escapeHtml(item.dept)}</div>
-        <div class="text-slate-500 mb-1">${escapeHtml(item.location)}</div>
-        <div class="inline-block px-2 py-0.5 bg-emerald-50 text-emerald-600 rounded-md font-bold">${escapeHtml(item.owner)}</div>
-      </td>
+        <div class="font-bold text-slate-700">${escapeHtml(item.department || item.dept || '-')}</div>
+        <div class="text-slate-500">ที่ตั้ง: ${escapeHtml(item.location_asset || item.location || '-')}</div>
+        <div class="text-slate-500">ปฏิบัติงาน: ${escapeHtml(item.workplace || '-')}</div>
+        <div class="inline-block px-2 py-0.5 bg-emerald-50 text-emerald-600 rounded-md font-bold mt-1">ผู้ดูแล: ${escapeHtml(item.responsible_person || item.owner || '-')}</div>
+       </td>
       <td class="px-6 py-4 text-center">
-        <span class="px-3 py-1 rounded-full text-[10px] font-bold ${item.status.includes('ปกติ') ? 'bg-emerald-100 text-emerald-700' : 'bg-orange-100 text-orange-700'}">
+        <span class="px-3 py-1 rounded-full text-[10px] font-bold ${getStatusClass(item.status)}">
           ${escapeHtml(item.status)}
         </span>
-      </td>
+       </td>
       <td class="px-6 py-4 text-center">
         ${item.url ? `<a href="${item.url}" target="_blank" class="text-emerald-600 hover:text-emerald-800 font-bold text-xs underline" onclick="event.stopPropagation()">ลิงก์ข้อมูล</a>` : '-'}
-      </td>
-    </tr>
+       </td>
+     </tr>
   `).join('');
 }
 
@@ -60,15 +62,17 @@ function renderMobileTable(data) {
     <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 mb-3 animate-in cursor-pointer active:scale-98 transition-transform" onclick="showAssetDetail(${JSON.stringify(item).replace(/"/g, '&quot;')})">
       <div class="flex justify-between items-start mb-2">
         <span class="text-[10px] font-mono font-bold text-slate-400">#${escapeHtml(item.id)}</span>
-        <span class="text-[9px] px-2 py-0.5 rounded-full font-bold ${item.status.includes('ปกติ') ? 'bg-emerald-50 text-emerald-600' : 'bg-orange-50 text-orange-600'}">
+        <span class="text-[9px] px-2 py-0.5 rounded-full font-bold ${getStatusClass(item.status)}">
           ${escapeHtml(item.status)}
         </span>
       </div>
       <h4 class="font-bold text-slate-800 text-sm mb-1">${escapeHtml(item.type)}</h4>
       <div class="text-[11px] text-slate-500 space-y-1 border-l-2 border-slate-100 pl-3">
         <div class="font-bold text-slate-700">${escapeHtml(item.brand || '')} ${escapeHtml(item.model || '')}</div>
-        <div><i class="opacity-50">หน่วยงาน:</i> ${escapeHtml(item.dept)}</div>
-        <div class="text-emerald-600 font-bold"><i class="opacity-50">ผู้ดูแล:</i> ${escapeHtml(item.owner)}</div>
+        <div><span class="opacity-50">หน่วยงาน:</span> ${escapeHtml(item.department || item.dept || '-')}</div>
+        <div><span class="opacity-50">ที่ตั้ง:</span> ${escapeHtml(item.location_asset || item.location || '-')}</div>
+        <div><span class="opacity-50">ปฏิบัติงาน:</span> ${escapeHtml(item.workplace || '-')}</div>
+        <div class="text-emerald-600 font-bold"><span class="opacity-50">ผู้ดูแล:</span> ${escapeHtml(item.responsible_person || item.owner || '-')}</div>
       </div>
       ${item.url ? `
       <div class="mt-3 pt-2 border-t border-slate-50 flex justify-end">
@@ -79,11 +83,35 @@ function renderMobileTable(data) {
 }
 
 /**
+ * ฟังก์ชันกำหนดคลาส CSS ตามสถานะ
+ * @param {string} status - สถานะทรัพย์สิน
+ * @returns {string} - ชื่อคลาส CSS
+ */
+function getStatusClass(status) {
+  if (!status) return 'bg-slate-100 text-slate-600';
+  if (status.includes('ปกติ') || status.includes('ใช้งานได้')) {
+    return 'bg-emerald-100 text-emerald-700';
+  }
+  if (status.includes('ชำรุด') || status.includes('พัง') || status.includes('รอซ่อม')) {
+    return 'bg-orange-100 text-orange-700';
+  }
+  if (status.includes('รอจำหน่าย')) {
+    return 'bg-slate-100 text-slate-600';
+  }
+  if (status.includes('จำหน่ายแล้ว')) {
+    return 'bg-gray-200 text-gray-600';
+  }
+  return 'bg-slate-100 text-slate-600';
+}
+
+/**
  * ฟังก์ชันป้องกัน XSS (แปลง HTML special characters)
+ * @param {string} str - ข้อความที่ต้องการแปลง
+ * @returns {string} - ข้อความที่แปลงแล้ว
  */
 function escapeHtml(str) {
   if (!str) return '';
-  return str
+  return String(str)
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
