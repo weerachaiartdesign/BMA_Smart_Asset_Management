@@ -70,7 +70,7 @@ function renderMobileTable(data) {
       <div class="text-[11px] text-slate-500 space-y-1 border-l-2 border-slate-100 pl-3">
         <div class="font-bold text-slate-700">${escapeHtml(item.brand || '')} ${escapeHtml(item.model || '')}</div>
         <!-- หน่วยงาน: ตัวอักษรสีเขียวเข้ม -->
-        <div class="text-emerald-700 font-semibold"><span class="opacity-50">หน่วยงาน:</span> ${escapeHtml(item.department || item.dept || '-')}</div>
+        <div class="text-emerald-700 font-bold"><span class="opacity-50">หน่วยงาน:</span> ${escapeHtml(item.department || item.dept || '-')}</div>
         <div><span class="opacity-50">ที่ตั้ง:</span> ${escapeHtml(item.location_asset || item.location || '-')}</div>
         <!-- ผู้ดูแล: ตัวอักษรสีดำเข้ม -->
         <div class="text-slate-800 font-semibold"><span class="opacity-50">ผู้ดูแล:</span> ${escapeHtml(item.responsible_person || item.owner || '-')}</div>
