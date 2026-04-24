@@ -1,5 +1,5 @@
 /**
- * version 00055
+ * version 00056
  * ไฟล์: dashboard.js
  * หน้าที่: คำนวณข้อมูลทางสถิติและวาดกราฟ (Chart.js) สำหรับหน้า Dashboard
  */
@@ -28,7 +28,7 @@ function renderDesktopDashboard(data) {
     const typeMap = groupAndSortData(data, 'type', 10);
     const deptMap = groupAndSortData(data, 'department', 10);
 
-    // 4. วาดกราฟ
+    // 4. วาดกราฟ (Desktop ใช้แบบแนวตั้งปกติ)
     updateChart('typeChart', 'doughnut', Object.keys(typeMap), Object.values(typeMap));
     updateChart('deptChart', 'bar', Object.keys(deptMap), Object.values(deptMap));
 }
@@ -51,12 +51,13 @@ function renderMobileDashboard(data) {
         const el = document.getElementById(v);
         if(el) el.innerText = stats[k].toLocaleString();
     });
+    
     // เตรียมข้อมูลสำหรับกราฟ (จัดกลุ่มและดึง 10 อันดับแรก)
     const typeMap = groupAndSortData(data, 'type', 10);
     const deptMap = groupAndSortData(data, 'department', 10);
 
-    // วาดกราฟมือถือ
-    updateMobileChart('mTypeChart', 'doughnut', Object.keys(typeMap), Object.values(typeMap));
+    // วาดกราฟมือถือ (เปลี่ยนประเภทเป็นแนวนอนทั้งคู่)
+    updateMobileChart('mTypeChart', 'horizontalBar', Object.keys(typeMap), Object.values(typeMap));
     updateMobileChart('mDeptChart', 'horizontalBar', Object.keys(deptMap), Object.values(deptMap));
 }
 
@@ -107,10 +108,11 @@ function updateChart(id, type, labels, values) {
                 y: {
                     beginAtZero: true,
                     ticks: { stepSize: 1, font: { size: 10 } },
-                    title: { display: true, text: 'จำนวน (รายการ)', font: { size: 10 } }
+                    title: { display: false }  // เอาชื่อแกน Y ออก
                 },
                 x: {
-                    ticks: { font: { size: 9 }, rotation: -30, autoSkip: true, maxRotation: 45 }
+                    ticks: { font: { size: 9 }, rotation: -30, autoSkip: true, maxRotation: 45 },
+                    title: { display: false }  // เอาชื่อแกน X ออก
                 }
             }
         }
@@ -165,11 +167,7 @@ function updateMobileChart(id, type, labels, values) {
             scales: {
                 x: {
                     display: !isHorizontalBar,
-                    title: {
-                        display: !isHorizontalBar,
-                        text: 'รายการ',
-                        font: { size: 9 }
-                    },
+                    title: { display: false },  // เอาชื่อแกน X ออก
                     ticks: {
                         font: { size: 8 },
                         stepSize: 1,
@@ -179,11 +177,7 @@ function updateMobileChart(id, type, labels, values) {
                 },
                 y: {
                     display: true,
-                    title: {
-                        display: isHorizontalBar,
-                        text: 'หน่วยงาน',
-                        font: { size: 9 }
-                    },
+                    title: { display: false },  // เอาชื่อแกน Y ออก
                     ticks: {
                         font: { size: 8 },
                         stepSize: 1
