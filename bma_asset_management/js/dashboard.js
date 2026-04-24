@@ -24,9 +24,9 @@ function renderDesktopDashboard(data) {
         if(el) el.innerText = stats[key].toLocaleString();
     });
 
-    // 3. เตรียมข้อมูลสำหรับกราฟ (จัดกลุ่มและดึง 8 อันดับแรก)
-    const typeMap = groupAndSortData(data, 'type', 8);
-    const deptMap = groupAndSortData(data, 'department', 8);
+    // 3. เตรียมข้อมูลสำหรับกราฟ (จัดกลุ่มและดึง 15 อันดับแรก)
+    const typeMap = groupAndSortData(data, 'type', 15);
+    const deptMap = groupAndSortData(data, 'department', 15);
 
     // 4. วาดกราฟ
     updateChart('typeChart', 'doughnut', Object.keys(typeMap), Object.values(typeMap));
@@ -51,9 +51,9 @@ function renderMobileDashboard(data) {
         const el = document.getElementById(v);
         if(el) el.innerText = stats[k].toLocaleString();
     });
-
-    const typeMap = groupAndSortData(data, 'type', 6);
-    const deptMap = groupAndSortData(data, 'department', 6);
+    // เตรียมข้อมูลสำหรับกราฟ (จัดกลุ่มและดึง 15 อันดับแรก)
+    const typeMap = groupAndSortData(data, 'type', 15);
+    const deptMap = groupAndSortData(data, 'department', 15);
 
     // วาดกราฟมือถือ
     updateMobileChart('mTypeChart', 'doughnut', Object.keys(typeMap), Object.values(typeMap));
@@ -167,7 +167,7 @@ function updateMobileChart(id, type, labels, values) {
                     display: !isHorizontalBar,
                     title: {
                         display: !isHorizontalBar,
-                        text: 'จำนวน (รายการ)',
+                        text: 'รายการ',
                         font: { size: 9 }
                     },
                     ticks: {
