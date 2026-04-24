@@ -2,7 +2,6 @@
  * version 00055
  * ไฟล์: assets-list.js
  * หน้าที่: จัดการการแสดงผลข้อมูลทรัพย์สินในรูปแบบตาราง (Desktop) และการ์ด (Mobile)
- * ปรับปรุง: แสดงหน่วยงาน/สถานที่/ผู้รับผิดชอบ ตามโครงสร้างใหม่
  */
 
 /**
@@ -26,22 +25,24 @@ function renderDesktopTable(data) {
         <div class="font-bold text-slate-700">${escapeHtml(item.brand || '-')}</div>
         <div>${escapeHtml(item.model || '-')}</div>
         <div class="text-[10px] opacity-60">SN: ${escapeHtml(item.serial || '-')}</div>
-       </td>
+      </td>
       <td class="px-6 py-4 text-xs">
-        <div class="font-bold text-slate-700">${escapeHtml(item.department || item.dept || '-')}</div>
-        <div class="text-slate-500">ที่ตั้ง: ${escapeHtml(item.location_asset || item.location || '-')}</div>
-        <div class="inline-block px-2 py-0.5 bg-emerald-50 text-emerald-600 rounded-md font-bold mt-1">ผู้ดูแล: ${escapeHtml(item.responsible_person || item.owner || '-')}</div>
+        <!-- ฝ่าย/กลุ่มงาน: พื้นสีเขียวอ่อน -->
+        <div class="inline-block px-2 py-0.5 bg-emerald-50 text-emerald-600 rounded-md font-bold">${escapeHtml(item.department || item.dept || '-')}</div>
+        <div class="text-slate-500 mt-1">ที่ตั้ง: ${escapeHtml(item.location_asset || item.location || '-')}</div>
+        <!-- ผู้ดูแล: font-bold ปกติ ไม่มีพื้นสี -->
+        <div class="font-bold text-slate-700 mt-1">ผู้ดูแล: ${escapeHtml(item.responsible_person || item.owner || '-')}</div>
         <div class="text-slate-500">ปฏิบัติงาน: ${escapeHtml(item.workplace || '-')}</div>
-       </td>
+      </td>
       <td class="px-6 py-4 text-center">
         <span class="px-3 py-1 rounded-full text-[10px] font-bold ${getStatusClass(item.status)}">
           ${escapeHtml(item.status)}
         </span>
-       </td>
+      </td>
       <td class="px-6 py-4 text-center">
         ${item.url ? `<a href="${item.url}" target="_blank" class="text-emerald-600 hover:text-emerald-800 font-bold text-xs underline" onclick="event.stopPropagation()">ลิงก์ข้อมูล</a>` : '-'}
-       </td>
-     </tr>
+      </td>
+    </tr>
   `).join('');
 }
 
@@ -69,9 +70,11 @@ function renderMobileTable(data) {
       <h4 class="font-bold text-slate-800 text-sm mb-1">${escapeHtml(item.type)}</h4>
       <div class="text-[11px] text-slate-500 space-y-1 border-l-2 border-slate-100 pl-3">
         <div class="font-bold text-slate-700">${escapeHtml(item.brand || '')} ${escapeHtml(item.model || '')}</div>
-        <div><span class="opacity-50">หน่วยงาน:</span> ${escapeHtml(item.department || item.dept || '-')}</div>
+        <!-- หน่วยงาน: ตัวอักษรสีเขียวเข้ม (text-emerald-700) -->
+        <div class="text-emerald-700 font-semibold"><span class="opacity-50">หน่วยงาน:</span> ${escapeHtml(item.department || item.dept || '-')}</div>
         <div><span class="opacity-50">ที่ตั้ง:</span> ${escapeHtml(item.location_asset || item.location || '-')}</div>
-        <div class="text-emerald-600 font-bold"><span class="opacity-50">ผู้ดูแล:</span> ${escapeHtml(item.responsible_person || item.owner || '-')}</div>
+        <!-- ผู้ดูแล: ตัวอักษรสีดำเข้ม (text-slate-800) -->
+        <div class="text-slate-800 font-semibold"><span class="opacity-50">ผู้ดูแล:</span> ${escapeHtml(item.responsible_person || item.owner || '-')}</div>
         <div><span class="opacity-50">ปฏิบัติงาน:</span> ${escapeHtml(item.workplace || '-')}</div>
       </div>
       ${item.url ? `
