@@ -1,4 +1,4 @@
-<!-- version 00001 -->
+<!-- version 00055 -->
 <!-- 
   ไฟล์: asset-detail.html
   หน้าที่: Template แสดงรายละเอียดทรัพย์สินแบบ Modal
@@ -53,50 +53,71 @@
         </div>
       </div>
 
-      <!-- แถวที่ 2: หน่วยงาน / สถานที่ตั้ง / ผู้รับผิดชอบ -->
+      <!-- แถวที่ 2: หน่วยงาน/สถานที่/ผู้รับผิดชอบ (ตามโครงสร้างใหม่) -->
       <div class="detail-section">
         <p class="detail-label">หน่วยงานและผู้รับผิดชอบ</p>
-        <div class="detail-grid-2">
+        <div class="space-y-2">
           <div>
-            <p class="detail-sub-label">หน่วยงาน</p>
-            <p class="detail-value" id="detail-dept">-</p>
+            <p class="detail-sub-label">ฝ่าย/กลุ่มงาน</p>
+            <p class="detail-value" id="detail-department">-</p>
           </div>
           <div>
-            <p class="detail-sub-label">สถานที่ตั้ง</p>
-            <p class="detail-value" id="detail-location">-</p>
+            <p class="detail-sub-label">ที่ตั้งทรัพย์สิน</p>
+            <p class="detail-value" id="detail-location-asset">-</p>
+          </div>
+          <div>
+            <p class="detail-sub-label">สถานที่ปฏิบัติงาน</p>
+            <p class="detail-value" id="detail-workplace">-</p>
           </div>
           <div>
             <p class="detail-sub-label">ผู้รับผิดชอบ</p>
-            <p class="detail-value" id="detail-owner">-</p>
+            <p class="detail-value font-bold text-emerald-700" id="detail-responsible-person">-</p>
           </div>
         </div>
       </div>
 
-      <!-- แถวที่ 3: ข้อมูลเพิ่มเติม -->
+      <!-- แถวที่ 3: วันที่และมูลค่า -->
       <div class="detail-section">
-        <p class="detail-label">ข้อมูลเพิ่มเติม</p>
+        <p class="detail-label">วันที่และมูลค่า</p>
         <div class="detail-grid-2">
           <div>
-            <p class="detail-sub-label">วันที่ได้มา</p>
-            <p class="detail-value" id="detail-acquired">-</p>
+            <p class="detail-sub-label">วันที่รับทรัพย์สินครั้งแรก</p>
+            <p class="detail-value" id="detail-acquired-date">-</p>
           </div>
           <div>
-            <p class="detail-sub-label">ราคา</p>
-            <p class="detail-value" id="detail-price">-</p>
+            <p class="detail-sub-label">วันที่รับเข้าหน่วยงาน</p>
+            <p class="detail-value" id="detail-receive-date">-</p>
           </div>
           <div>
             <p class="detail-sub-label">อายุการใช้งาน</p>
             <p class="detail-value" id="detail-age">-</p>
           </div>
+          <div>
+            <p class="detail-sub-label">มูลค่าต้นทุน</p>
+            <p class="detail-value" id="detail-value">-</p>
+          </div>
         </div>
       </div>
 
-      <!-- ส่วนรูปภาพ (เตรียมไว้ รองรับอนาคต) -->
+      <!-- แถวที่ 4: ข้อมูลการซ่อม (แสดงเฉพาะกรณีชำรุด) -->
+      <div class="detail-section" id="detail-repair-section" style="display: none;">
+        <p class="detail-label">ข้อมูลการซ่อม</p>
+        <div class="detail-grid-2">
+          <div>
+            <p class="detail-sub-label">เลขที่ใบแจ้งซ่อม</p>
+            <p class="detail-value" id="detail-repair-number">-</p>
+          </div>
+          <div>
+            <p class="detail-sub-label">รูปภาพการซ่อม</p>
+            <div class="detail-image-container" id="detail-repair-images"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ส่วนรูปภาพ -->
       <div class="detail-section" id="detail-image-section" style="display: none;">
         <p class="detail-label">รูปภาพประกอบ</p>
-        <div class="detail-image-container" id="detail-images">
-          <!-- รูปภาพจะถูกเพิ่มที่นี่ -->
-        </div>
+        <div class="detail-image-container" id="detail-images"></div>
       </div>
 
       <!-- หมายเหตุ -->
@@ -105,9 +126,24 @@
         <p class="detail-value text-slate-500 italic" id="detail-remark">-</p>
       </div>
 
+      <!-- ระบบตรวจสอบ -->
+      <div class="detail-section">
+        <p class="detail-label">สถานะการตรวจสอบ</p>
+        <div class="detail-grid-2">
+          <div>
+            <p class="detail-sub-label">การสำรวจ</p>
+            <p class="detail-value" id="detail-explore">-</p>
+          </div>
+          <div>
+            <p class="detail-sub-label">การยืนยัน</p>
+            <p class="detail-value" id="detail-confirm">-</p>
+          </div>
+        </div>
+      </div>
+
     </div>
 
-    <!-- ส่วนท้าย Modal (ปุ่มลิงก์) -->
+    <!-- ส่วนท้าย Modal -->
     <div class="modal-footer">
       <a href="#" id="detail-url" target="_blank" class="modal-link-btn">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -123,7 +159,6 @@
 
 <!-- สไตล์ inline เผื่อ CSS ยังไม่โหลด -->
 <style>
-  /* Modal Overlay */
   .modal-overlay {
     position: fixed;
     top: 0;
@@ -139,20 +174,18 @@
     animation: fadeIn 0.2s ease-out;
   }
   
-  /* Modal Container */
   .modal-container {
     position: relative;
     background: white;
     border-radius: 24px;
     width: 90%;
-    max-width: 600px;
+    max-width: 650px;
     max-height: 85vh;
     overflow-y: auto;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
     animation: slideUp 0.3s ease-out;
   }
   
-  /* ปุ่มปิด */
   .modal-close-btn {
     position: absolute;
     top: 16px;
@@ -176,7 +209,6 @@
     transform: scale(1.05);
   }
   
-  /* Header */
   .modal-header {
     padding: 24px 24px 16px 24px;
     border-bottom: 1px solid #e2e8f0;
@@ -185,12 +217,10 @@
     align-items: flex-start;
   }
   
-  /* Body */
   .modal-body {
     padding: 20px 24px;
   }
   
-  /* Footer */
   .modal-footer {
     padding: 16px 24px 24px 24px;
     border-top: 1px solid #e2e8f0;
@@ -199,7 +229,6 @@
     gap: 12px;
   }
   
-  /* Detail Sections */
   .detail-section {
     margin-bottom: 24px;
   }
@@ -211,6 +240,8 @@
     letter-spacing: 0.05em;
     color: #12643a;
     margin-bottom: 12px;
+    border-left: 3px solid #12643a;
+    padding-left: 10px;
   }
   
   .detail-sub-label {
@@ -238,7 +269,6 @@
     gap: 16px;
   }
   
-  /* Link Button */
   .modal-link-btn {
     display: flex;
     align-items: center;
@@ -273,7 +303,6 @@
     background: #0a4a2c;
   }
   
-  /* Image Container */
   .detail-image-container {
     display: flex;
     gap: 12px;
@@ -288,9 +317,13 @@
     border-radius: 12px;
     border: 1px solid #e2e8f0;
     cursor: pointer;
+    transition: transform 0.2s;
   }
   
-  /* Animations */
+  .detail-image:hover {
+    transform: scale(1.05);
+  }
+  
   @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
@@ -307,7 +340,6 @@
     }
   }
   
-  /* Responsive */
   @media (max-width: 640px) {
     .modal-container {
       width: 95%;
@@ -329,6 +361,11 @@
     
     .detail-value {
       font-size: 13px;
+    }
+    
+    .detail-image {
+      width: 70px;
+      height: 70px;
     }
   }
 </style>
