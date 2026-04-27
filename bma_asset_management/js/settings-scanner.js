@@ -186,19 +186,39 @@ async function submitScannerData() {
         formData.scan_date = document.getElementById('scan-date').value;
         formData.source = 'scanner';
         
+        console.log("กำลังส่งข้อมูล:", formData);
+        
         const response = await fetch(GAS_API_URL, { 
             method: 'POST', 
             body: JSON.stringify(formData) 
         });
         const result = await response.json();
         
+        console.log("ผลลัพธ์จาก server:", result);
+        
+        // ✅ แก้ไข: รอให้ modal ปิดก่อนแล้วค่อยล้างฟอร์ม
         showScannerModal(result.message, result.success ? "success" : "error", () => {
             if (result.success) {
-                resetScannerForm();  // เรียกฟังก์ชันล้างข้อมูล
+                resetScannerForm();
+                // ✅ เพิ่ม: แจ้งเตือนเพิ่มเติมว่าสามารถสแกนรายการถัดไปได้
+                setTimeout(() => {
+                    const statusDiv = document.getElementById('qr-status');
+                    if (statusDiv) {
+                        statusDiv.innerText = "✅ บันทึกสำเร็จ! พร้อมสแกนรายการถัดไป";
+                        statusDiv.className = "qr-status status-success";
+                        setTimeout(() => {
+                            if (statusDiv.innerText.includes("สำเร็จ")) {
+                                statusDiv.innerText = "📱 พร้อมสแกน QR Code";
+                                statusDiv.className = "qr-status status-idle";
+                            }
+                        }, 2000);
+                    }
+                }, 500);
             }
         });
         
     } catch (error) {
+        console.error("Error:", error);
         showScannerModal("เกิดข้อผิดพลาดในการเชื่อมต่อ: " + error.message, "error");
     } finally {
         saveBtn.disabled = false;
@@ -210,6 +230,14 @@ function resetScannerForm() {
     // ล้างค่าทั้งหมดในฟอร์ม
     const form = document.getElementById('scanner-asset-form');
     if (form) form.reset();
+    
+    // ล้างค่าด้วยตนเอง (เผื่อ reset ไม่ทำงาน)
+    const allInputs = document.querySelectorAll('#scanner-asset-form input');
+    allInputs.forEach(input => {
+        if (input.type !== 'hidden') {
+            input.value = '';
+        }
+    });
     
     // ซ่อนฟอร์มการ์ด
     const formCard = document.getElementById('scanner-form-card');
@@ -232,9 +260,26 @@ function resetScannerForm() {
     
     // รีเซ็ตปุ่มบันทึกให้เป็น disabled จนกว่าจะสแกนใหม่
     const saveBtn = document.getElementById('scanner-save-btn');
-    if (saveBtn) saveBtn.disabled = true;
+    if (saveBtn) {
+        saveBtn.disabled = true;
+    }
     
-    // ✅ ไม่เปิดกล้องอัตโนมัติ รอให้ผู้ใช้กดเปิดกล้องเอง
+    // ✅ เพิ่ม: รีเซ็ตปุ่มเปิดกล้องให้กลับมาแสดง
+    const startBtn = document.getElementById('start-camera-btn');
+    const stopBtn = document.getElementById('stop-camera-btn');
+    const readerDiv = document.getElementById('qr-reader');
+    
+    if (startBtn) startBtn.style.display = 'flex';
+    if (stopBtn) stopBtn.style.display = 'none';
+    if (readerDiv) readerDiv.style.display = 'none';
+    
+    // ✅ เพิ่ม: ปิดกล้องถ้ากำลังเปิดอยู่
+    if (scannerHtml5QrCode && scannerHtml5QrCode.isScanning) {
+        stopScannerCamera();
+    }
+    
+    // ล้าง console (optional)
+    console.log("ฟอร์มถูกล้างเรียบร้อย");
 }
 
 function showScannerModal(message, type = 'success', callback = null) {
