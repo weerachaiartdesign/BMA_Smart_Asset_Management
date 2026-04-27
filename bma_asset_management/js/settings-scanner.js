@@ -184,6 +184,8 @@ async function submitScannerData() {
         });
         formData.url = document.getElementById('scan-url').value;
         formData.scan_date = document.getElementById('scan-date').value;
+
+        formData.source = 'scanner';
         
         const response = await fetch(GAS_API_URL, { 
             method: 'POST', 
