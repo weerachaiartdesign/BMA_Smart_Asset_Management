@@ -24,6 +24,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+    <!-- ✅ เพิ่มไลบรารีสำหรับสแกน QR Code -->
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
     
     <script>
         tailwind.config = {
@@ -41,6 +44,15 @@
     <div id="loading" class="fixed inset-0 z-[100] bg-white flex flex-col items-center justify-center transition-opacity duration-500">
         <div class="spinner mb-6"></div>
         <p id="loading-text" class="text-slate-500 font-bold animate-pulse">กำลังดึงข้อมูลทรัพย์สินจากระบบ...</p>
+    </div>
+
+     <!-- ✅ เพิ่ม Modal สำหรับแจ้งเตือน (Scanner ใช้) -->
+    <div id="customModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(4px); z-index: 9999; align-items: center; justify-content: center;">
+        <div style="background: #1e293b; border-radius: 24px; max-width: 320px; width: 90%; padding: 24px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);">
+            <div id="modalIcon" style="font-size: 40px; margin-bottom: 16px;">✅</div>
+            <div id="modalText" style="font-size: 16px; margin-bottom: 20px; color: white; line-height: 1.5;">บันทึกข้อมูลเรียบร้อย!</div>
+            <button onclick="closeModal()" style="width: 100%; padding: 12px; background: #10b981; border: none; border-radius: 12px; color: white; font-weight: 700; cursor: pointer; transition: background 0.2s;">ตกลง</button>
+        </div>
     </div>
 
     <!-- โครงสร้างหลัก -->
@@ -138,6 +150,9 @@
     <script src="js/dashboard.js"></script>
     <script src="js/assets-list.js"></script>
     <script src="js/asset-detail.js"></script>
+    <script src="js/index.js"></script>
+      <!-- ✅ เพิ่ม settings-scanner.js -->
+    <script src="js/settings-scanner.js"></script>
     <script src="js/index.js"></script>
 </body>
 </html>
